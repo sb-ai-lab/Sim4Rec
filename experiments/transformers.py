@@ -3,6 +3,7 @@ from pyspark.ml.param.shared import HasInputCol
 from pyspark.sql import DataFrame
 import pyspark.sql.functions as sf
 from pyspark.ml.param.shared import Params, Param, TypeConverters
+from pyspark.ml.util import DefaultParamsReadable, DefaultParamsWritable
 
 class HasMultiplierValue(Params):
     multiplierValue = Param(
@@ -23,12 +24,14 @@ class HasMultiplierValue(Params):
 
 class ModelCalibration(ActionModelTransformer,
                        HasInputCol,
-                       HasMultiplierValue):
+                       HasMultiplierValue,
+                       DefaultParamsReadable,
+                       DefaultParamsWritable):
     def __init__(
         self,
-        value : float,
-        inputCol : str,
-        outputCol : str
+        value : float = 0.0,
+        inputCol : str = None,
+        outputCol : str = None
     ):
         """
         Multiplies response function output by the chosen value.

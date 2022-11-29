@@ -19,7 +19,7 @@ from simulator.response import CosineSimilatiry, BernoulliResponse, NoiseRespons
 from simulator.utils import VectorElementExtractor
 
 from replay.data_preparator import Indexer
-from ucb import UCB
+from replay.models import UCB
 
 NUM_JOBS = int(sys.argv[1])
 
