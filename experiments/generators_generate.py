@@ -5,7 +5,7 @@ import pandas as pd
 import torch
 from pyspark.sql import SparkSession
 from replay.session_handler import State
-from simulator.modules import SDVDataGenerator
+from sim4rec.modules import SDVDataGenerator
 
 SPARK_LOCAL_DIR = '/data/home/anthony/tmp'
 RESULT_DIR = '../bin'

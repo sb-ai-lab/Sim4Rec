@@ -4,8 +4,9 @@ version = "0.0.1"
 description = "Simulator for recommendation algorithms"
 authors = ["Your Name <you@example.com>"]
 packages = [
-    { include = "simulator" }
+    { include = "sim4rec" }
 ]
+readme = "README.md"
 
 [tool.poetry.dependencies]
 python = ">=3.8, <3.10"

@@ -1,4 +1,4 @@
-from simulator.response import ActionModelTransformer
+from sim4rec.response import ActionModelTransformer
 from pyspark.ml.param.shared import HasInputCol
 from pyspark.sql import DataFrame
 import pyspark.sql.functions as sf

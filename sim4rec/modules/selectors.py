@@ -3,7 +3,7 @@ from pyspark.sql import DataFrame
 from pyspark.ml import Transformer, Estimator
 from pyspark.ml.util import DefaultParamsReadable, DefaultParamsWritable
 from pyspark import keyword_only
-from simulator.params import HasUserKeyColumn, HasItemKeyColumn, HasSeed, HasSeedSequence
+from sim4rec.params import HasUserKeyColumn, HasItemKeyColumn, HasSeed, HasSeedSequence
 
 
 class ItemSelectionEstimator(Estimator,
