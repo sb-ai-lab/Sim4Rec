@@ -21,6 +21,7 @@ pip install sim4rec
 To install dependencies with poetry run
 
 ```bash
+pip install --upgrade pip wheel poetry lightfm==1.17
 poetry install
 ```
 
@@ -34,9 +35,9 @@ import pandas as pd
 
 import pyspark.sql.types as st
 from pyspark.ml import PipelineModel
-from simulator.utils import pandas_to_spark
-from simulator.modules import RealDataGenerator, Simulator
-from simulator.response import NoiseResponse, BernoulliResponse
+from sim4rec.utils import pandas_to_spark
+from sim4rec.modules import RealDataGenerator, Simulator
+from sim4rec.response import NoiseResponse, BernoulliResponse
 
 from ucb import UCB
 from replay.metrics import NDCG
