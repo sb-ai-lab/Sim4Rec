@@ -5,7 +5,7 @@ import pandas as pd
 import pyspark.sql.functions as sf
 from pyspark.sql import DataFrame
 
-from simulator.modules import (
+from sim4rec.modules import (
     RealDataGenerator,
     SDVDataGenerator,
     CompositeGenerator

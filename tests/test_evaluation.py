@@ -2,14 +2,14 @@ import pytest
 
 from pyspark.sql import DataFrame, SparkSession
 
-from simulator.modules import (
+from sim4rec.modules import (
     evaluate_synthetic,
     EvaluateMetrics,
     ks_test,
     kl_divergence,
     QualityControlObjective
 )
-from simulator.response import ConstantResponse
+from sim4rec.response import ConstantResponse
 
 from replay.metrics import NDCG, Precision
 

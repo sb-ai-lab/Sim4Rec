@@ -10,13 +10,13 @@ import numpy as np
 
 from pyspark.sql import SparkSession
 from replay.session_handler import State
-from simulator.utils import pandas_to_spark
-from simulator.modules import SDVDataGenerator
+from sim4rec.utils import pandas_to_spark
+from sim4rec.modules import SDVDataGenerator
 from pyspark.ml.classification import LogisticRegression
 from pyspark.ml.feature import VectorAssembler
 from pyspark.ml import PipelineModel
-from simulator.response import CosineSimilatiry, BernoulliResponse, NoiseResponse, ParametricResponseFunction
-from simulator.utils import VectorElementExtractor
+from sim4rec.response import CosineSimilatiry, BernoulliResponse, NoiseResponse, ParametricResponseFunction
+from sim4rec.utils import VectorElementExtractor
 
 from replay.data_preparator import Indexer
 from replay.models import UCB
@@ -135,7 +135,7 @@ pipeline = PipelineModel(
     ]
 )
 
-from simulator.modules import Simulator, EvaluateMetrics
+from sim4rec.modules import Simulator, EvaluateMetrics
 from replay.metrics import NDCG
 
 sim = Simulator(

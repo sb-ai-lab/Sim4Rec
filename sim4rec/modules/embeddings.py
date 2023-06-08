@@ -12,7 +12,7 @@ from pyspark.ml import Transformer, Estimator
 from pyspark.ml.util import DefaultParamsReadable, DefaultParamsWritable
 from pyspark.ml.param.shared import HasInputCols, HasOutputCols
 
-from simulator.params import HasDevice, HasSeed
+from sim4rec.params import HasDevice, HasSeed
 
 
 class Encoder(torch.nn.Module):

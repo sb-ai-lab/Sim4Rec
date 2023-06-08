@@ -6,7 +6,7 @@ from pyspark.sql import DataFrame, SparkSession
 from pyspark.ml import PipelineModel
 from pyspark.ml.feature import VectorAssembler
 
-from simulator.modules import (
+from sim4rec.modules import (
     Simulator,
     RealDataGenerator,
     SDVDataGenerator,
@@ -14,7 +14,7 @@ from simulator.modules import (
     CrossJoinItemEstimator,
     CrossJoinItemTransformer
 )
-from simulator.response import CosineSimilatiry
+from sim4rec.response import CosineSimilatiry
 
 
 SEED = 1234

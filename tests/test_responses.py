@@ -4,7 +4,7 @@ from pyspark.sql import DataFrame, SparkSession
 from pyspark.ml.feature import VectorAssembler
 from pyspark.ml.linalg import DenseVector
 
-from simulator.response import (
+from sim4rec.response import (
     BernoulliResponse,
     NoiseResponse,
     ConstantResponse,

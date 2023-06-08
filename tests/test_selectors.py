@@ -1,7 +1,7 @@
 import pytest
 from pyspark.sql import DataFrame
 
-from simulator.modules import (
+from sim4rec.modules import (
     CrossJoinItemEstimator,
     CrossJoinItemTransformer
 )
