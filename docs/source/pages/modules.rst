@@ -1,7 +1,7 @@
 Modules
 =======
 
-.. automodule:: simulator.modules
+.. automodule:: sim4rec.modules
 
 
 Generators
@@ -20,16 +20,16 @@ of users or mixing results from different generating models) that it will be use
 at ``CompositeGenerator`` which can handle a list of generators has a proportion mixing parameter
 which controls the weights of particular generators at sampling and generating time.
 
-.. autoclass:: simulator.modules.GeneratorBase
+.. autoclass:: sim4rec.modules.GeneratorBase
     :members:
 
-.. autoclass:: simulator.modules.RealDataGenerator
+.. autoclass:: sim4rec.modules.RealDataGenerator
     :members:
 
-.. autoclass:: simulator.modules.SDVDataGenerator
+.. autoclass:: sim4rec.modules.SDVDataGenerator
     :members:
 
-.. autoclass:: simulator.modules.CompositeGenerator
+.. autoclass:: sim4rec.modules.CompositeGenerator
     :members:
 
 
@@ -41,10 +41,10 @@ applied before performing the main simulator pipeline. Here the autoencoder esti
 are implemented in the chance of the existing spark methods are not enough for your propose. The usage
 example can be found in `notebooks` directory.
 
-.. autoclass:: simulator.modules.EncoderEstimator
+.. autoclass:: sim4rec.modules.EncoderEstimator
     :members:
 
-.. autoclass:: simulator.modules.EncoderTransformer
+.. autoclass:: sim4rec.modules.EncoderTransformer
     :members:
 
 
@@ -62,17 +62,17 @@ class, to implement some pre-calculation logic, and ``ItemSelectionTransformer``
 creation. Both classes are inherited from spark's Estimator and Transformer classes and to define
 fit() and transform() methods the one can just overwrite ``_fit()`` and ``_transform()``.
 
-.. autoclass:: simulator.modules.ItemSelectionEstimator
+.. autoclass:: sim4rec.modules.ItemSelectionEstimator
     :members:
 
-.. autoclass:: simulator.modules.ItemSelectionTransformer
+.. autoclass:: sim4rec.modules.ItemSelectionTransformer
     :members:
 
-.. autoclass:: simulator.modules.CrossJoinItemEstimator
+.. autoclass:: sim4rec.modules.CrossJoinItemEstimator
     :members:
     :private-members: _fit
 
-.. autoclass:: simulator.modules.CrossJoinItemTransformer
+.. autoclass:: sim4rec.modules.CrossJoinItemTransformer
     :members:
     :private-members: _transform
 
@@ -96,23 +96,23 @@ Some of the steps can be skipped depending on the task your perform. For example
 a second step if your algorithm dont use user-item pairs as an input or you don't need to refit
 the model if you want just to evaluate it on some data. For more usage please refer to examples
 
-.. autoclass:: simulator.modules.Simulator
+.. autoclass:: sim4rec.modules.Simulator
     :members:
 
 
 Evaluation
 __________
 
-.. autoclass:: simulator.modules.EvaluateMetrics
+.. autoclass:: sim4rec.modules.EvaluateMetrics
     :members:
     :special-members: __call__
 
-.. autofunction:: simulator.modules.evaluate_synthetic
+.. autofunction:: sim4rec.modules.evaluate_synthetic
 
-.. autoclass:: simulator.modules.QualityControlObjective
+.. autoclass:: sim4rec.modules.QualityControlObjective
     :members:
     :special-members: __call__
 
-.. autofunction:: simulator.modules.ks_test
+.. autofunction:: sim4rec.modules.ks_test
 
-.. autofunction:: simulator.modules.kl_divergence
+.. autofunction:: sim4rec.modules.kl_divergence

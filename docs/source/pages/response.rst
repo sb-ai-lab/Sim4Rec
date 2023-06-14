@@ -1,7 +1,7 @@
 Response functions
 ==================
 
-.. automodule:: simulator.response
+.. automodule:: sim4rec.response
 
 
 Response functions are used to model users behaviour on items to simulate any
@@ -26,27 +26,27 @@ or transform() logic the one should overwrite ``_fit()`` and ``_transform()`` re
 Note, that those base classes are useful to implement your own response function, but are not
 necessary, and to create a response pipeline any proper spark's estimators/transformers can be used
 
-.. autoclass:: simulator.response.ActionModelEstimator
+.. autoclass:: sim4rec.response.ActionModelEstimator
     :members:
 
-.. autoclass:: simulator.response.ActionModelTransformer
+.. autoclass:: sim4rec.response.ActionModelTransformer
     :members:
 
 
 Response functions
 __________________
 
-.. autoclass:: simulator.response.ConstantResponse
+.. autoclass:: sim4rec.response.ConstantResponse
     :members:
 
-.. autoclass:: simulator.response.NoiseResponse
+.. autoclass:: sim4rec.response.NoiseResponse
     :members:
 
-.. autoclass:: simulator.response.CosineSimilatiry
+.. autoclass:: sim4rec.response.CosineSimilatiry
     :members:
 
-.. autoclass:: simulator.response.BernoulliResponse
+.. autoclass:: sim4rec.response.BernoulliResponse
     :members:
 
-.. autoclass:: simulator.response.ParametricResponseFunction
+.. autoclass:: sim4rec.response.ParametricResponseFunction
     :members:

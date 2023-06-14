@@ -1,34 +1,34 @@
 Utils
 =====
 
-.. automodule:: simulator.utils
+.. automodule:: sim4rec.utils
 
 
 Dataframe convertation
 ______________________
 
-.. autofunction:: simulator.utils.pandas_to_spark
+.. autofunction:: sim4rec.utils.pandas_to_spark
 
 
 Exceptions
 __________
 
-.. autoclass:: simulator.utils.NotFittedError
+.. autoclass:: sim4rec.utils.NotFittedError
     :members:
 
-.. autoclass:: simulator.utils.EmptyDataFrameError
+.. autoclass:: sim4rec.utils.EmptyDataFrameError
     :members:
 
 
 Transformers
 ____________
 
-.. autoclass:: simulator.utils.VectorElementExtractor
+.. autoclass:: sim4rec.utils.VectorElementExtractor
     :members:
 
 
 File management
 _______________
 
-.. autofunction:: simulator.utils.save
-.. autofunction:: simulator.utils.load
+.. autofunction:: sim4rec.utils.save
+.. autofunction:: sim4rec.utils.load
