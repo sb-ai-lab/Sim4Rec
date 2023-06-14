@@ -18,6 +18,11 @@ As a part of simulation process the framework incorporates data generators, resp
 pip install sim4rec
 ```
 
+If the installation takes too long, try
+```bash
+pip install sim4rec --use-deprecated=legacy-resolver
+```
+
 To install dependencies with poetry run
 
 ```bash
