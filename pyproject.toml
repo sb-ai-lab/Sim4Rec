@@ -3,7 +3,10 @@ name = "sim4rec"
 version = "0.0.1"
 description = "Simulator for recommendation algorithms"
 authors = ["Alexey Vasilev",
-           "Anna Volodkevich"]
+           "Anna Volodkevich",
+           "Andrey Gurov",
+           "Elizaveta Stavinova",
+           "Anton Lysenko"]
 packages = [
     { include = "sim4rec" }
 ]
