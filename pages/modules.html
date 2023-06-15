@@ -1,0 +1,892 @@
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" >
+<head>
+  <meta charset="utf-8" /><meta name="generator" content="Docutils 0.18.1: http://docutils.sourceforge.net/" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Modules &mdash; Sim4Rec 0.0.1 documentation</title>
+      <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+      <link rel="stylesheet" href="../_static/css/theme.css" type="text/css" />
+  <!--[if lt IE 9]>
+    <script src="../_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+        <script src="../_static/jquery.js"></script>
+        <script src="../_static/_sphinx_javascript_frameworks_compat.js"></script>
+        <script data-url_root="../" id="documentation_options" src="../_static/documentation_options.js"></script>
+        <script src="../_static/doctools.js"></script>
+        <script src="../_static/sphinx_highlight.js"></script>
+        <script async="async" src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+    <script src="../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" />
+    <link rel="next" title="Response functions" href="response.html" />
+    <link rel="prev" title="Welcome to Sim4Rec’s documentation!" href="../index.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="../index.html" class="icon icon-home">
+            Sim4Rec
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">Contents:</span></p>
+<ul class="current">
+<li class="toctree-l1 current"><a class="current reference internal" href="#">Modules</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="#generators">Generators</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#sim4rec.modules.GeneratorBase"><code class="docutils literal notranslate"><span class="pre">GeneratorBase</span></code></a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#sim4rec.modules.GeneratorBase.fit"><code class="docutils literal notranslate"><span class="pre">GeneratorBase.fit()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#sim4rec.modules.GeneratorBase.generate"><code class="docutils literal notranslate"><span class="pre">GeneratorBase.generate()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#sim4rec.modules.GeneratorBase.sample"><code class="docutils literal notranslate"><span class="pre">GeneratorBase.sample()</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="#sim4rec.modules.RealDataGenerator"><code class="docutils literal notranslate"><span class="pre">RealDataGenerator</span></code></a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#sim4rec.modules.RealDataGenerator.fit"><code class="docutils literal notranslate"><span class="pre">RealDataGenerator.fit()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#sim4rec.modules.RealDataGenerator.generate"><code class="docutils literal notranslate"><span class="pre">RealDataGenerator.generate()</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="#sim4rec.modules.SDVDataGenerator"><code class="docutils literal notranslate"><span class="pre">SDVDataGenerator</span></code></a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#sim4rec.modules.SDVDataGenerator.fit"><code class="docutils literal notranslate"><span class="pre">SDVDataGenerator.fit()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#sim4rec.modules.SDVDataGenerator.generate"><code class="docutils literal notranslate"><span class="pre">SDVDataGenerator.generate()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#sim4rec.modules.SDVDataGenerator.load"><code class="docutils literal notranslate"><span class="pre">SDVDataGenerator.load()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#sim4rec.modules.SDVDataGenerator.save_model"><code class="docutils literal notranslate"><span class="pre">SDVDataGenerator.save_model()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#sim4rec.modules.SDVDataGenerator.setDevice"><code class="docutils literal notranslate"><span class="pre">SDVDataGenerator.setDevice()</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="#sim4rec.modules.CompositeGenerator"><code class="docutils literal notranslate"><span class="pre">CompositeGenerator</span></code></a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#sim4rec.modules.CompositeGenerator.generate"><code class="docutils literal notranslate"><span class="pre">CompositeGenerator.generate()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#sim4rec.modules.CompositeGenerator.sample"><code class="docutils literal notranslate"><span class="pre">CompositeGenerator.sample()</span></code></a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="#embeddings">Embeddings</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#sim4rec.modules.EncoderEstimator"><code class="docutils literal notranslate"><span class="pre">EncoderEstimator</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#sim4rec.modules.EncoderTransformer"><code class="docutils literal notranslate"><span class="pre">EncoderTransformer</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="#items-selectors">Items selectors</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#sim4rec.modules.ItemSelectionEstimator"><code class="docutils literal notranslate"><span class="pre">ItemSelectionEstimator</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#sim4rec.modules.ItemSelectionTransformer"><code class="docutils literal notranslate"><span class="pre">ItemSelectionTransformer</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#sim4rec.modules.CrossJoinItemEstimator"><code class="docutils literal notranslate"><span class="pre">CrossJoinItemEstimator</span></code></a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#sim4rec.modules.CrossJoinItemEstimator._fit"><code class="docutils literal notranslate"><span class="pre">CrossJoinItemEstimator._fit()</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="#sim4rec.modules.CrossJoinItemTransformer"><code class="docutils literal notranslate"><span class="pre">CrossJoinItemTransformer</span></code></a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#sim4rec.modules.CrossJoinItemTransformer._transform"><code class="docutils literal notranslate"><span class="pre">CrossJoinItemTransformer._transform()</span></code></a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="#simulator">Simulator</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#sim4rec.modules.Simulator"><code class="docutils literal notranslate"><span class="pre">Simulator</span></code></a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#sim4rec.modules.Simulator.clear_log"><code class="docutils literal notranslate"><span class="pre">Simulator.clear_log()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#sim4rec.modules.Simulator.get_log"><code class="docutils literal notranslate"><span class="pre">Simulator.get_log()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#sim4rec.modules.Simulator.get_user_items"><code class="docutils literal notranslate"><span class="pre">Simulator.get_user_items()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#sim4rec.modules.Simulator.sample_items"><code class="docutils literal notranslate"><span class="pre">Simulator.sample_items()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#sim4rec.modules.Simulator.sample_responses"><code class="docutils literal notranslate"><span class="pre">Simulator.sample_responses()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#sim4rec.modules.Simulator.sample_users"><code class="docutils literal notranslate"><span class="pre">Simulator.sample_users()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#sim4rec.modules.Simulator.update_log"><code class="docutils literal notranslate"><span class="pre">Simulator.update_log()</span></code></a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="#evaluation">Evaluation</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#sim4rec.modules.EvaluateMetrics"><code class="docutils literal notranslate"><span class="pre">EvaluateMetrics</span></code></a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#sim4rec.modules.EvaluateMetrics.__call__"><code class="docutils literal notranslate"><span class="pre">EvaluateMetrics.__call__()</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="#sim4rec.modules.evaluate_synthetic"><code class="docutils literal notranslate"><span class="pre">evaluate_synthetic()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#sim4rec.modules.QualityControlObjective"><code class="docutils literal notranslate"><span class="pre">QualityControlObjective</span></code></a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#sim4rec.modules.QualityControlObjective.__call__"><code class="docutils literal notranslate"><span class="pre">QualityControlObjective.__call__()</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="#sim4rec.modules.ks_test"><code class="docutils literal notranslate"><span class="pre">ks_test()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#sim4rec.modules.kl_divergence"><code class="docutils literal notranslate"><span class="pre">kl_divergence()</span></code></a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="response.html">Response functions</a></li>
+<li class="toctree-l1"><a class="reference internal" href="utils.html">Utils</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../index.html">Sim4Rec</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../index.html" class="icon icon-home" aria-label="Home"></a></li>
+      <li class="breadcrumb-item active">Modules</li>
+      <li class="wy-breadcrumbs-aside">
+            <a href="../_sources/pages/modules.rst.txt" rel="nofollow"> View page source</a>
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <section id="module-sim4rec.modules">
+<span id="modules"></span><h1>Modules<a class="headerlink" href="#module-sim4rec.modules" title="Permalink to this heading"></a></h1>
+<section id="generators">
+<h2>Generators<a class="headerlink" href="#generators" title="Permalink to this heading"></a></h2>
+<p>Generators serves for generating synthetic either real data for simulation process.
+All of the generators are derived from <code class="docutils literal notranslate"><span class="pre">GeneratorBase</span></code> base class and to implement
+your own generator you must inherit from it. Basicly, the generator fits from a provided
+dataset (in case of real generator it just remembers it), than it creates a population to
+sample from with a number of rows by calling the <code class="docutils literal notranslate"><span class="pre">generate()</span></code> method and samples from
+this those population with <code class="docutils literal notranslate"><span class="pre">sample()</span></code> method. Note, that <code class="docutils literal notranslate"><span class="pre">sample()</span></code> takes the fraction
+of population size.</p>
+<p>If a user is interested in using multiple generators at ones (e.g. modelling multiple groups
+of users or mixing results from different generating models) that it will be useful to look
+at <code class="docutils literal notranslate"><span class="pre">CompositeGenerator</span></code> which can handle a list of generators has a proportion mixing parameter
+which controls the weights of particular generators at sampling and generating time.</p>
+<dl class="py class">
+<dt class="sig sig-object py" id="sim4rec.modules.GeneratorBase">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">sim4rec.modules.</span></span><span class="sig-name descname"><span class="pre">GeneratorBase</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">label</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">seed</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#sim4rec.modules.GeneratorBase" title="Permalink to this definition"></a></dt>
+<dd><p>Base class for data generators</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>label</strong> – Generator string label</p></li>
+<li><p><strong>seed</strong> – Fixes seed sequence to use during multiple
+generator calls, defaults to None</p></li>
+</ul>
+</dd>
+</dl>
+<dl class="py method">
+<dt class="sig sig-object py" id="sim4rec.modules.GeneratorBase.fit">
+<span class="sig-name descname"><span class="pre">fit</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">df</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">DataFrame</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#sim4rec.modules.GeneratorBase.fit" title="Permalink to this definition"></a></dt>
+<dd><p>Fits generator on passed dataframe</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>df</strong> – Source dataframe to fit on</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="sim4rec.modules.GeneratorBase.generate">
+<em class="property"><span class="pre">abstract</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">generate</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">num_samples</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#sim4rec.modules.GeneratorBase.generate" title="Permalink to this definition"></a></dt>
+<dd><p>Generates num_samples from fitted model or saved dataframe</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>num_samples</strong> – Number of samples to generate</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="sim4rec.modules.GeneratorBase.sample">
+<span class="sig-name descname"><span class="pre">sample</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">sample_frac</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">float</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">DataFrame</span></span></span><a class="headerlink" href="#sim4rec.modules.GeneratorBase.sample" title="Permalink to this definition"></a></dt>
+<dd><p>Samples a fraction of rows from a dataframe, generated with
+generate() call</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>sample_frac</strong> – Fraction of rows</p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>Sampled dataframe</p>
+</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="sim4rec.modules.RealDataGenerator">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">sim4rec.modules.</span></span><span class="sig-name descname"><span class="pre">RealDataGenerator</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">label</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">seed</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#sim4rec.modules.RealDataGenerator" title="Permalink to this definition"></a></dt>
+<dd><p>Real data generator, which can sample from existing dataframe</p>
+<p>Base class for data generators</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>label</strong> – Generator string label</p></li>
+<li><p><strong>seed</strong> – Fixes seed sequence to use during multiple
+generator calls, defaults to None</p></li>
+</ul>
+</dd>
+</dl>
+<dl class="py method">
+<dt class="sig sig-object py" id="sim4rec.modules.RealDataGenerator.fit">
+<span class="sig-name descname"><span class="pre">fit</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">df</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">DataFrame</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">None</span></span></span><a class="headerlink" href="#sim4rec.modules.RealDataGenerator.fit" title="Permalink to this definition"></a></dt>
+<dd><dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>df</strong> – Dataframe for generation and sampling</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="sim4rec.modules.RealDataGenerator.generate">
+<span class="sig-name descname"><span class="pre">generate</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">num_samples</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">DataFrame</span></span></span><a class="headerlink" href="#sim4rec.modules.RealDataGenerator.generate" title="Permalink to this definition"></a></dt>
+<dd><p>Generates a number of samples from fitted dataframe
+and keeps it for sampling</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>num_samples</strong> – Number of samples to generate</p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>Generated dataframe</p>
+</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="sim4rec.modules.SDVDataGenerator">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">sim4rec.modules.</span></span><span class="sig-name descname"><span class="pre">SDVDataGenerator</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">label</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">id_column_name</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">model_name</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">'gaussiancopula'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">parallelization_level</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">1</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">device_name</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">'cpu'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">seed</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#sim4rec.modules.SDVDataGenerator" title="Permalink to this definition"></a></dt>
+<dd><p>Synthetic data generator with a bunch of models from SDV library</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>label</strong> – Generator string label</p></li>
+<li><p><strong>id_column_name</strong> – Column name for identifier</p></li>
+<li><p><strong>model_name</strong> – Name of a SDV model. Possible values are:
+[‘copulagan’, ‘ctgan’, ‘gaussiancopula’, ‘tvae’],
+defaults to ‘gaussiancopula’</p></li>
+<li><p><strong>parallelization_level</strong> – Parallelization level, defaults to 1</p></li>
+<li><p><strong>device_name</strong> – PyTorch device name, defaults to ‘cpu’</p></li>
+<li><p><strong>seed</strong> – Fixes seed sequence to use during multiple
+generator calls, defaults to None</p></li>
+</ul>
+</dd>
+</dl>
+<dl class="py method">
+<dt class="sig sig-object py" id="sim4rec.modules.SDVDataGenerator.fit">
+<span class="sig-name descname"><span class="pre">fit</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">df</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">DataFrame</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">None</span></span></span><a class="headerlink" href="#sim4rec.modules.SDVDataGenerator.fit" title="Permalink to this definition"></a></dt>
+<dd><p>Fits a generation model with a passed dataframe. The one should
+pass only feature columns</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>df</strong> – Dataframe to fit on</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="sim4rec.modules.SDVDataGenerator.generate">
+<span class="sig-name descname"><span class="pre">generate</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">num_samples</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">DataFrame</span></span></span><a class="headerlink" href="#sim4rec.modules.SDVDataGenerator.generate" title="Permalink to this definition"></a></dt>
+<dd><p>Generates a number of samples from fitted dataframe
+and keeps it for sampling</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>num_samples</strong> – Number of samples to generate</p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>Generated dataframe</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="sim4rec.modules.SDVDataGenerator.load">
+<em class="property"><span class="pre">static</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">load</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">filename</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#sim4rec.modules.SDVDataGenerator.load" title="Permalink to this definition"></a></dt>
+<dd><p>Loads the generator model from the file</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>filename</strong> – Path to the file</p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>Generator instance with restored model</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="sim4rec.modules.SDVDataGenerator.save_model">
+<span class="sig-name descname"><span class="pre">save_model</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">filename</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#sim4rec.modules.SDVDataGenerator.save_model" title="Permalink to this definition"></a></dt>
+<dd><p>Saves generator model to file. Note, that it saves only
+fitted model, but not the generated dataframe</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>filename</strong> – Path to the file</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="sim4rec.modules.SDVDataGenerator.setDevice">
+<span class="sig-name descname"><span class="pre">setDevice</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">device_name</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">None</span></span></span><a class="headerlink" href="#sim4rec.modules.SDVDataGenerator.setDevice" title="Permalink to this definition"></a></dt>
+<dd><p>Changes the current device. Note, that for gaussiancopula
+model, only cpu is supported</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>device_name</strong> – PyTorch device name</p>
+</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="sim4rec.modules.CompositeGenerator">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">sim4rec.modules.</span></span><span class="sig-name descname"><span class="pre">CompositeGenerator</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">generators</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">List</span><span class="p"><span class="pre">[</span></span><a class="reference internal" href="#sim4rec.modules.GeneratorBase" title="sim4rec.modules.generator.GeneratorBase"><span class="pre">GeneratorBase</span></a><span class="p"><span class="pre">]</span></span></span></em>, <em class="sig-param"><span class="n"><span class="pre">label</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">weights</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Iterable</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#sim4rec.modules.CompositeGenerator" title="Permalink to this definition"></a></dt>
+<dd><p>Wrapper for sampling from multiple generators. Use weights
+parameter to control the sampling fraction for each of the
+generator</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>generators</strong> – List of generators</p></li>
+<li><p><strong>label</strong> – Generator string label</p></li>
+<li><p><strong>weights</strong> – Weights for each of the generator. Weights
+must be normalized (sums to 1), defaults to None</p></li>
+</ul>
+</dd>
+</dl>
+<dl class="py method">
+<dt class="sig sig-object py" id="sim4rec.modules.CompositeGenerator.generate">
+<span class="sig-name descname"><span class="pre">generate</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">num_samples</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">None</span></span></span><a class="headerlink" href="#sim4rec.modules.CompositeGenerator.generate" title="Permalink to this definition"></a></dt>
+<dd><p>For each generator calls generate() with number of samples,
+proportional to weights to generate num_samples in total. You
+can call this method to not perform generate() separately on
+each generator</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>num_samples</strong> – Total number of samples to generate</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="sim4rec.modules.CompositeGenerator.sample">
+<span class="sig-name descname"><span class="pre">sample</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">sample_frac</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">float</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">DataFrame</span></span></span><a class="headerlink" href="#sim4rec.modules.CompositeGenerator.sample" title="Permalink to this definition"></a></dt>
+<dd><p>Samples a fraction of rows from generators according to the weights.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>sample_frac</strong> – Fraction of rows</p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>Sampled dataframe</p>
+</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
+</section>
+<section id="embeddings">
+<h2>Embeddings<a class="headerlink" href="#embeddings" title="Permalink to this heading"></a></h2>
+<p>Embeddings can be utilized in case of high dimensional data or high data sparsity and it should be
+applied before performing the main simulator pipeline. Here the autoencoder estimator and transformer
+are implemented in the chance of the existing spark methods are not enough for your propose. The usage
+example can be found in <cite>notebooks</cite> directory.</p>
+<dl class="py class">
+<dt class="sig sig-object py" id="sim4rec.modules.EncoderEstimator">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">sim4rec.modules.</span></span><span class="sig-name descname"><span class="pre">EncoderEstimator</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">inputCols</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">List</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">]</span></span></span></em>, <em class="sig-param"><span class="n"><span class="pre">outputCols</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">List</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">]</span></span></span></em>, <em class="sig-param"><span class="n"><span class="pre">hidden_dim</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">lr</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">float</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">batch_size</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">num_loader_workers</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">max_iter</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">100</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">device_name</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">'cpu'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">seed</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#sim4rec.modules.EncoderEstimator" title="Permalink to this definition"></a></dt>
+<dd><p>Estimator for encoder part of the autoencoder pipeline. Trains
+the encoder to process incoming data into latent representation</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>inputCols</strong> – Column names to process</p></li>
+<li><p><strong>outputCols</strong> – List of output column names per latent coordinate.
+The length of outputCols will determine the embedding dimension size</p></li>
+<li><p><strong>hidden_dim</strong> – Size of hidden layers</p></li>
+<li><p><strong>lr</strong> – Learning rate</p></li>
+<li><p><strong>batch_size</strong> – Batch size during training process</p></li>
+<li><p><strong>num_loader_workers</strong> – Number of cpus to use for data loader</p></li>
+<li><p><strong>max_iter</strong> – Maximum number of iterations, defaults to 100</p></li>
+<li><p><strong>device_name</strong> – PyTorch device name, defaults to ‘cpu’</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="sim4rec.modules.EncoderTransformer">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">sim4rec.modules.</span></span><span class="sig-name descname"><span class="pre">EncoderTransformer</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">inputCols</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">List</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">]</span></span></span></em>, <em class="sig-param"><span class="n"><span class="pre">outputCols</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">List</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">]</span></span></span></em>, <em class="sig-param"><span class="n"><span class="pre">encoder</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Encoder</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">device_name</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">'cpu'</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#sim4rec.modules.EncoderTransformer" title="Permalink to this definition"></a></dt>
+<dd><p>Encoder transformer that transforms incoming columns into latent
+representation. Output data will be appended to dataframe and
+named according to outputCols parameter</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>inputCols</strong> – Column names to process</p></li>
+<li><p><strong>outputCols</strong> – List of output column names per latent coordinate.
+The length of outputCols must be equal to embedding dimension of
+a trained encoder</p></li>
+<li><p><strong>encoder</strong> – Trained encoder</p></li>
+<li><p><strong>device_name</strong> – PyTorch device name, defaults to ‘cpu’</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+</section>
+<section id="items-selectors">
+<h2>Items selectors<a class="headerlink" href="#items-selectors" title="Permalink to this heading"></a></h2>
+<p>Those spark transformers are used to assign items to given users while making the candidate
+pairs for prediction by recommendation system. It is optional to use selector in your pipelines
+if a recommendation algorithm can recommend any item with no restrictions. The one should
+implement own selector in case of custom logic of items selection for a certain users. Selector
+could implement some business rules (e.g. some items are not available for a user), be a simple
+recommendation model, generating candidates, or create user-specific items (e.g. price offers)
+online. To implement your custom selector, you can derive from a <code class="docutils literal notranslate"><span class="pre">ItemSelectionEstimator</span></code> base
+class, to implement some pre-calculation logic, and <code class="docutils literal notranslate"><span class="pre">ItemSelectionTransformer</span></code> to perform pairs
+creation. Both classes are inherited from spark’s Estimator and Transformer classes and to define
+fit() and transform() methods the one can just overwrite <code class="docutils literal notranslate"><span class="pre">_fit()</span></code> and <code class="docutils literal notranslate"><span class="pre">_transform()</span></code>.</p>
+<dl class="py class">
+<dt class="sig sig-object py" id="sim4rec.modules.ItemSelectionEstimator">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">sim4rec.modules.</span></span><span class="sig-name descname"><span class="pre">ItemSelectionEstimator</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">userKeyColumn</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">itemKeyColumn</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#sim4rec.modules.ItemSelectionEstimator" title="Permalink to this definition"></a></dt>
+<dd><p>Base class for item selection estimator</p>
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="sim4rec.modules.ItemSelectionTransformer">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">sim4rec.modules.</span></span><span class="sig-name descname"><span class="pre">ItemSelectionTransformer</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">userKeyColumn</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">itemKeyColumn</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#sim4rec.modules.ItemSelectionTransformer" title="Permalink to this definition"></a></dt>
+<dd><p>Base class for item selection transformer. transform()
+will be used to create user-item pairs</p>
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="sim4rec.modules.CrossJoinItemEstimator">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">sim4rec.modules.</span></span><span class="sig-name descname"><span class="pre">CrossJoinItemEstimator</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">k</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">userKeyColumn</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">itemKeyColumn</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">seed</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#sim4rec.modules.CrossJoinItemEstimator" title="Permalink to this definition"></a></dt>
+<dd><p>Assigns k items for every user from random items subsample</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>k</strong> – Number of items for every user</p></li>
+<li><p><strong>userKeyColumn</strong> – Users identifier column, defaults to None</p></li>
+<li><p><strong>itemKeyColumn</strong> – Items identifier column, defaults to None</p></li>
+<li><p><strong>seed</strong> – Random state seed, defaults to None</p></li>
+</ul>
+</dd>
+</dl>
+<dl class="py method">
+<dt class="sig sig-object py" id="sim4rec.modules.CrossJoinItemEstimator._fit">
+<span class="sig-name descname"><span class="pre">_fit</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">df</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">DataFrame</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#sim4rec.modules.CrossJoinItemEstimator._fit" title="Permalink to this definition"></a></dt>
+<dd><p>Fits estimator with items dataframe</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>df</strong> – Items dataframe</p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>CrossJoinItemTransformer instance</p>
+</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="sim4rec.modules.CrossJoinItemTransformer">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">sim4rec.modules.</span></span><span class="sig-name descname"><span class="pre">CrossJoinItemTransformer</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">item_df</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">DataFrame</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">k</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">userKeyColumn</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">itemKeyColumn</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">seed</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#sim4rec.modules.CrossJoinItemTransformer" title="Permalink to this definition"></a></dt>
+<dd><p>Assigns k items for every user from random items subsample</p>
+<dl class="py method">
+<dt class="sig sig-object py" id="sim4rec.modules.CrossJoinItemTransformer._transform">
+<span class="sig-name descname"><span class="pre">_transform</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">df</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">DataFrame</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#sim4rec.modules.CrossJoinItemTransformer._transform" title="Permalink to this definition"></a></dt>
+<dd><p>Takes a users dataframe and assings defined number of items</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>df</strong> – Users dataframe</p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>Users cross join on random items subsample</p>
+</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
+</section>
+<section id="simulator">
+<h2>Simulator<a class="headerlink" href="#simulator" title="Permalink to this heading"></a></h2>
+<p>The simulator class provides a way to handle the simulation process by connecting different
+parts of the module such as generatos and response pipelines and saving the results to a
+given directory. The simulation process consists of the following steps:</p>
+<ul class="simple">
+<li><p>Sampling random real or synthetic users</p></li>
+<li><p>Creation of candidate user-item pairs for a recommendation algorithm</p></li>
+<li><p>Prediction by a recommendation system</p></li>
+<li><p>Evaluating respones on a given recommendations</p></li>
+<li><p>Updating the history log</p></li>
+<li><p>Metrics evaluation</p></li>
+<li><p>Refitting the recommendation model with a new data</p></li>
+</ul>
+<p>Some of the steps can be skipped depending on the task your perform. For example you don’t need
+a second step if your algorithm dont use user-item pairs as an input or you don’t need to refit
+the model if you want just to evaluate it on some data. For more usage please refer to examples</p>
+<dl class="py class">
+<dt class="sig sig-object py" id="sim4rec.modules.Simulator">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">sim4rec.modules.</span></span><span class="sig-name descname"><span class="pre">Simulator</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">user_gen</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="#sim4rec.modules.GeneratorBase" title="sim4rec.modules.generator.GeneratorBase"><span class="pre">GeneratorBase</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">item_gen</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="#sim4rec.modules.GeneratorBase" title="sim4rec.modules.generator.GeneratorBase"><span class="pre">GeneratorBase</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">data_dir</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">log_df</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">DataFrame</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">user_key_col</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">'user_idx'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">item_key_col</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">'item_idx'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">spark_session</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">SparkSession</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#sim4rec.modules.Simulator" title="Permalink to this definition"></a></dt>
+<dd><p>Simulator for recommendation systems, which uses the users
+and items data passed to it, to simulate the users responses
+to recommended items</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>user_gen</strong> – Users data generator instance</p></li>
+<li><p><strong>item_gen</strong> – Items data generator instance</p></li>
+<li><p><strong>log_df</strong> – The history log with user-item pairs with other
+necessary fields. During the simulation the results will be
+appended to this log on update_log() call, defaults to None</p></li>
+<li><p><strong>user_key_col</strong> – User identifier column name, defaults
+to ‘user_idx’</p></li>
+<li><p><strong>item_key_col</strong> – Item identifier column name, defaults
+to ‘item_idx’</p></li>
+<li><p><strong>data_dir</strong> – Directory name to save simulator data</p></li>
+<li><p><strong>spark_session</strong> – Spark session to use, defaults to None</p></li>
+</ul>
+</dd>
+</dl>
+<dl class="py method">
+<dt class="sig sig-object py" id="sim4rec.modules.Simulator.clear_log">
+<span class="sig-name descname"><span class="pre">clear_log</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">None</span></span></span><a class="headerlink" href="#sim4rec.modules.Simulator.clear_log" title="Permalink to this definition"></a></dt>
+<dd><p>Clears the log</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="sim4rec.modules.Simulator.get_log">
+<span class="sig-name descname"><span class="pre">get_log</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">user_df</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">DataFrame</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">DataFrame</span></span></span><a class="headerlink" href="#sim4rec.modules.Simulator.get_log" title="Permalink to this definition"></a></dt>
+<dd><p>Returns log for users listed in passed users’ dataframe</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>user_df</strong> – Dataframe with user identifiers to get log for</p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>Users’ history log. Will return None, if there is no log data</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="sim4rec.modules.Simulator.get_user_items">
+<span class="sig-name descname"><span class="pre">get_user_items</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">user_df</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">DataFrame</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">selector</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Transformer</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">Tuple</span><span class="p"><span class="pre">[</span></span><span class="pre">DataFrame</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">DataFrame</span><span class="p"><span class="pre">]</span></span></span></span><a class="headerlink" href="#sim4rec.modules.Simulator.get_user_items" title="Permalink to this definition"></a></dt>
+<dd><p>Froms candidate pairs to pass to the recommendation algorithm based
+on the provided users</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>user_df</strong> – Users dataframe with features and identifiers</p></li>
+<li><p><strong>selector</strong> – Transformer to use for creating user-item pairs</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>Tuple of user-item pairs and log dataframes which will
+be used by recommendation algorithm. Will return None as a log,
+if there is no log data</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="sim4rec.modules.Simulator.sample_items">
+<span class="sig-name descname"><span class="pre">sample_items</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">frac_items</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">float</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">DataFrame</span></span></span><a class="headerlink" href="#sim4rec.modules.Simulator.sample_items" title="Permalink to this definition"></a></dt>
+<dd><p>Samples a fraction of random items</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>frac_items</strong> – Fractions of items to sample from item generator</p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>Sampled users dataframe</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="sim4rec.modules.Simulator.sample_responses">
+<span class="sig-name descname"><span class="pre">sample_responses</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">recs_df</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">DataFrame</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">user_features</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">DataFrame</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">item_features</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">DataFrame</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">action_models</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">PipelineModel</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">DataFrame</span></span></span><a class="headerlink" href="#sim4rec.modules.Simulator.sample_responses" title="Permalink to this definition"></a></dt>
+<dd><p>Simulates the actions users took on their recommended items</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>recs_df</strong> – Dataframe with recommendations. Must contain
+user’s and item’s identifier columns. Other columns will
+be ignored</p></li>
+<li><p><strong>user_features</strong> – Users dataframe with features and identifiers</p></li>
+<li><p><strong>item_features</strong> – Items dataframe with features and identifiers</p></li>
+<li><p><strong>action_models</strong> – Spark pipeline to evaluate responses</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>DataFrame with user-item pairs and the respective actions</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="sim4rec.modules.Simulator.sample_users">
+<span class="sig-name descname"><span class="pre">sample_users</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">frac_users</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">float</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">DataFrame</span></span></span><a class="headerlink" href="#sim4rec.modules.Simulator.sample_users" title="Permalink to this definition"></a></dt>
+<dd><p>Samples a fraction of random users</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>frac_users</strong> – Fractions of users to sample from user generator</p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>Sampled users dataframe</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="sim4rec.modules.Simulator.update_log">
+<span class="sig-name descname"><span class="pre">update_log</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">log</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">DataFrame</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">iteration</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">str</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">None</span></span></span><a class="headerlink" href="#sim4rec.modules.Simulator.update_log" title="Permalink to this definition"></a></dt>
+<dd><p>Appends the passed log to the existing one</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>log</strong> – The log with user-item pairs with their respective
+necessary fields. If there was no log before this: remembers
+the log schema, to which the future logs will be compared.
+To reset current log and the schema see clear_log()</p></li>
+<li><p><strong>iteration</strong> – Iteration label or index</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
+</section>
+<section id="evaluation">
+<h2>Evaluation<a class="headerlink" href="#evaluation" title="Permalink to this heading"></a></h2>
+<dl class="py class">
+<dt class="sig sig-object py" id="sim4rec.modules.EvaluateMetrics">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">sim4rec.modules.</span></span><span class="sig-name descname"><span class="pre">EvaluateMetrics</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">userKeyCol</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">itemKeyCol</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">predictionCol</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">labelCol</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">replay_label_filter</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">float</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">1.0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">replay_metrics</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Dict</span><span class="p"><span class="pre">[</span></span><span class="pre">Metric</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">int</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">List</span><span class="p"><span class="pre">[</span></span><span class="pre">int</span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">mllib_metrics</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">List</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">]</span></span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#sim4rec.modules.EvaluateMetrics" title="Permalink to this definition"></a></dt>
+<dd><p>Recommendation systems and response function metric evaluator class.
+The class allows you to evaluate the quality of a response function on
+historical data or a recommender system on historical data or based on
+the results of an experiment in a simulator. Provides simultaneous
+calculation of several metrics using metrics from the Spark MLlib and
+RePlay libraries.
+A created instance is callable on a dataframe with <code class="docutils literal notranslate"><span class="pre">user_id,</span> <span class="pre">item_id,</span>
+<span class="pre">predicted</span> <span class="pre">relevance/response,</span> <span class="pre">true</span> <span class="pre">relevance/response</span></code> format, which
+you can usually retrieve from simulators sample_responses() or log data
+with recommendation algorithm scores. In case when the RePlay metrics
+are needed it additionally apply filter on a passed dataframe to take
+only necessary responses (e.g. when response is equal to 1).</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>userKeyCol</strong> – User identifier column name</p></li>
+<li><p><strong>itemKeyCol</strong> – Item identifier column name</p></li>
+<li><p><strong>predictionCol</strong> – Predicted scores column name</p></li>
+<li><p><strong>labelCol</strong> – True label column name</p></li>
+<li><p><strong>replay_label_filter</strong> – RePlay metrics assume that only positive
+responses are presented in ground truth data. All user-item pairs with
+col(labelCol) &gt;= replay_label_filter condition are treated as positive
+responses during RePlay metrics calculation, defaults to 1.0</p></li>
+<li><p><strong>replay_metrics</strong> – Dictionary with replay metrics. See
+<a class="reference external" href="https://sb-ai-lab.github.io/RePlay/pages/modules/metrics.html">https://sb-ai-lab.github.io/RePlay/pages/modules/metrics.html</a> for
+infromation about available metrics and their descriptions. The
+dictionary format is the same as in Experiment class of the RePlay
+library, defaults to None</p></li>
+<li><p><strong>mllib_metrics</strong> – Metrics to calculate from spark’s mllib. See
+REGRESSION_METRICS, MULTICLASS_METRICS, BINARY_METRICS for available
+values, defaults to None</p></li>
+</ul>
+</dd>
+</dl>
+<dl class="py method">
+<dt class="sig sig-object py" id="sim4rec.modules.EvaluateMetrics.__call__">
+<span class="sig-name descname"><span class="pre">__call__</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">df</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">DataFrame</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">Dict</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">float</span><span class="p"><span class="pre">]</span></span></span></span><a class="headerlink" href="#sim4rec.modules.EvaluateMetrics.__call__" title="Permalink to this definition"></a></dt>
+<dd><p>Performs metrics calculations on passed dataframe</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>df</strong> – Spark dataframe with userKeyCol, itemKeyCol, predictionCol
+and labelCol columns</p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>Dictionary with metrics</p>
+</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="sim4rec.modules.evaluate_synthetic">
+<span class="sig-prename descclassname"><span class="pre">sim4rec.modules.</span></span><span class="sig-name descname"><span class="pre">evaluate_synthetic</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">synth_df</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">DataFrame</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">real_df</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">DataFrame</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">dict</span></span></span><a class="headerlink" href="#sim4rec.modules.evaluate_synthetic" title="Permalink to this definition"></a></dt>
+<dd><p>Evaluates the quality of synthetic data against real. The following
+metrics will be calculated:</p>
+<ul class="simple">
+<li><p>LogisticDetection: The metric evaluates how hard it is to distinguish the synthetic data from the real data by using a Logistic regression model</p></li>
+<li><p>SVCDetection: The metric evaluates how hard it is to distinguish the synthetic data from the real data by using a C-Support Vector Classification model</p></li>
+<li><p>KSTest: This metric uses the two-sample Kolmogorov-Smirnov test to compare the distributions of continuous columns using the empirical CDF</p></li>
+<li><p>ContinuousKLDivergence: This approximates the KL divergence by binning the continuous values to turn them into categorical values and then computing the relative entropy</p></li>
+</ul>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>synth_df</strong> – Synthetic data without any identifiers</p></li>
+<li><p><strong>real_df</strong> – Real data without any identifiers</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>Dictionary with metrics on synthetic data quality</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="sim4rec.modules.QualityControlObjective">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">sim4rec.modules.</span></span><span class="sig-name descname"><span class="pre">QualityControlObjective</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">userKeyCol</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">itemKeyCol</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">predictionCol</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">labelCol</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">relevanceCol</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">response_function</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Transformer</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">replay_metrics</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Dict</span><span class="p"><span class="pre">[</span></span><span class="pre">Metric</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">int</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">List</span><span class="p"><span class="pre">[</span></span><span class="pre">int</span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#sim4rec.modules.QualityControlObjective" title="Permalink to this definition"></a></dt>
+<dd><p>QualityControlObjective is designed to evaluate the quality of response
+function by calculating the similarity degree between results of the
+model, which was trained on real data and a model, trained with
+simulator. The calculated function is</p>
+<div class="math notranslate nohighlight">
+\[ \begin{align}\begin{aligned}1 - KS(predictionCol, labelCol) + DKL_{norm}(predictionCol, labelCol)\\- \frac{1}{N} \sum_{n=1}^{N} |QM_{syn}^{i}(recs_{synthetic},
+ground\_truth_{synthetic}) - QM_{real}^{i}(recs_{real}, ground\_truth_{real})|,\end{aligned}\end{align} \]</div>
+<p>where</p>
+<div class="math notranslate nohighlight">
+\[ \begin{align}\begin{aligned}KS = supx||Q(x) - P(x)||\ (i.e.\ KS\ test\ statistic)\\DKL_{norm} = \frac{1}{1 + DKL}\end{aligned}\end{align} \]</div>
+<p>The greater value indicates more similarity between models’ result
+and lower value shows dissimilarity. As a predicted value for KS test
+and KL divergence it takes the result of <cite>response_function</cite> on a
+pairs from real log and compares the distributions similarity between
+real responses and predicted. For calculating QM from formula above
+the metrics from RePlay library are used. Those take ground truth and
+predicted values for both models and measures how close are metric
+values to each other.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>userKeyCol</strong> – User identifier column name</p></li>
+<li><p><strong>itemKeyCol</strong> – Item identifier column name</p></li>
+<li><p><strong>predictionCol</strong> – Prediction column name, which <cite>response_function</cite>
+will create</p></li>
+<li><p><strong>labelCol</strong> – Column name with ground truth response values</p></li>
+<li><p><strong>relevanceCol</strong> – Relevance column name for RePlay metrics. For
+ground truth dataframe it should be response score and for
+dataframe with recommendations it should be the predicted relevance
+from recommendation algorithm</p></li>
+<li><p><strong>response_function</strong> – Spark’s transformer which predict response
+value</p></li>
+<li><p><strong>replay_metrics</strong> – Dictionary with replay metrics. See
+<a class="reference external" href="https://sb-ai-lab.github.io/RePlay/pages/modules/metrics.html">https://sb-ai-lab.github.io/RePlay/pages/modules/metrics.html</a> for
+infromation about available metrics and their descriptions. The
+dictionary format is the same as in Experiment class of the RePlay
+library. Those metrics will be used as QM in the objective above</p></li>
+</ul>
+</dd>
+</dl>
+<dl class="py method">
+<dt class="sig sig-object py" id="sim4rec.modules.QualityControlObjective.__call__">
+<span class="sig-name descname"><span class="pre">__call__</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">test_log</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">DataFrame</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">user_features</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">DataFrame</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">item_features</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">DataFrame</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">real_recs</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">DataFrame</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">real_ground_truth</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">DataFrame</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">synthetic_recs</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">DataFrame</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">synthetic_ground_truth</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">DataFrame</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">float</span></span></span><a class="headerlink" href="#sim4rec.modules.QualityControlObjective.__call__" title="Permalink to this definition"></a></dt>
+<dd><p>Calculates the models similarity value. Note, that dataframe with
+recommendations for both synthetic and real data must include only
+users from ground truth dataframe</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>test_log</strong> – Real log dataframe with response values</p></li>
+<li><p><strong>user_features</strong> – Users features dataframe with identifier</p></li>
+<li><p><strong>item_features</strong> – Items features dataframe with identifier</p></li>
+<li><p><strong>real_recs</strong> – Recommendations dataframe from model trained on
+real dataset</p></li>
+<li><p><strong>real_ground_truth</strong> – Real log dataframe with only positive
+responses</p></li>
+<li><p><strong>synthetic_recs</strong> – Recommendations dataframe from model trained
+with simulator</p></li>
+<li><p><strong>synthetic_ground_truth</strong> – Simulator’s log dataframe with only
+positive responses</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>Function value</p>
+</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="sim4rec.modules.ks_test">
+<span class="sig-prename descclassname"><span class="pre">sim4rec.modules.</span></span><span class="sig-name descname"><span class="pre">ks_test</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">df</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">DataFrame</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">predCol</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">labelCol</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">float</span></span></span><a class="headerlink" href="#sim4rec.modules.ks_test" title="Permalink to this definition"></a></dt>
+<dd><p>Kolmogorov-Smirnov test on two dataframe columns</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>df</strong> – Dataframe with two target columns</p></li>
+<li><p><strong>predCol</strong> – Column name with values to test</p></li>
+<li><p><strong>labelCol</strong> – Column name with values to test against</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>Result of KS test</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="sim4rec.modules.kl_divergence">
+<span class="sig-prename descclassname"><span class="pre">sim4rec.modules.</span></span><span class="sig-name descname"><span class="pre">kl_divergence</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">df</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">DataFrame</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">predCol</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">labelCol</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">float</span></span></span><a class="headerlink" href="#sim4rec.modules.kl_divergence" title="Permalink to this definition"></a></dt>
+<dd><p>Normalized Kullback–Leibler divergence on two dataframe columns. The normalization is
+as follows:</p>
+<div class="math notranslate nohighlight">
+\[\frac{1}{1 + KL\_div}\]</div>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>df</strong> – Dataframe with two target columns</p></li>
+<li><p><strong>predCol</strong> – First column name</p></li>
+<li><p><strong>labelCol</strong> – Second column name</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>Result of KL divergence</p>
+</dd>
+</dl>
+</dd></dl>
+
+</section>
+</section>
+
+
+           </div>
+          </div>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
+        <a href="../index.html" class="btn btn-neutral float-left" title="Welcome to Sim4Rec’s documentation!" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="response.html" class="btn btn-neutral float-right" title="Response functions" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2022, Sberbank AI Laboratory.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>
