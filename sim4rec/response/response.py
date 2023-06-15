@@ -172,7 +172,7 @@ class ConstantResponse(ActionModelTransformer,
         """
 
         super().__init__(outputCol=outputCol)
-        
+
         self._set(constantValue=value)
 
     def _transform(
@@ -201,7 +201,7 @@ class CosineSimilatiry(ActionModelTransformer,
         """
 
         if inputCols is not None and len(inputCols) != 2:
-            raise ValueError('There must be two array columns '\
+            raise ValueError('There must be two array columns '
                              'to calculate cosine similarity')
 
         super().__init__(outputCol=outputCol)
@@ -264,6 +264,6 @@ class ParametricResponseFunction(ActionModelTransformer,
             outputCol,
             sum([
                 sf.col(c) * weights[i]
-                    for i, c in enumerate(inputCols)
-                ])
+                for i, c in enumerate(inputCols)
+            ])
         )

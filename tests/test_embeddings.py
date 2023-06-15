@@ -8,6 +8,7 @@ from sim4rec.modules import (
 
 SEED = 1234
 
+
 @pytest.fixture(scope="module")
 def estimator(users_df : DataFrame) -> EncoderEstimator:
     return EncoderEstimator(
@@ -21,6 +22,7 @@ def estimator(users_df : DataFrame) -> EncoderEstimator:
         device_name='cpu',
         seed=SEED
     )
+
 
 @pytest.fixture(scope="module")
 def transformer(
@@ -38,6 +40,7 @@ def test_estimator_fit(
     assert estimator._latent_dim == len(estimator.getOutputCols())
     assert estimator.getDevice() == transformer.getDevice()
     assert str(next(transformer._encoder.parameters()).device) == transformer.getDevice()
+
 
 def test_transformer_transform(
     users_df : DataFrame,

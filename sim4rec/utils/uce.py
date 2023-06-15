@@ -1,4 +1,4 @@
-## Utility class extensions
+# Utility class extensions
 
 import pickle
 import pyspark.sql.functions as sf
@@ -16,6 +16,7 @@ from pyspark import keyword_only
 
 class NotFittedError(Exception):
     pass
+
 
 class EmptyDataFrameError(Exception):
     pass

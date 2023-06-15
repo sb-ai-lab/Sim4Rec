@@ -98,7 +98,7 @@ class CrossJoinItemEstimator(ItemSelectionEstimator, HasSeed):
         userKeyColumn = self.getUserKeyColumn()
         itemKeyColumn = self.getItemKeyColumn()
         seed = self.getSeed()
-        
+
         if itemKeyColumn not in df.columns:
             raise ValueError(f'Dataframe has no {itemKeyColumn} column')
 

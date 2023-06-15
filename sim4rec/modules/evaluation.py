@@ -31,7 +31,8 @@ def evaluate_synthetic(
     - LogisticDetection: The metric evaluates how hard it is to distinguish the synthetic data from the real data by using a Logistic regression model
     - SVCDetection: The metric evaluates how hard it is to distinguish the synthetic data from the real data by using a C-Support Vector Classification model
     - KSTest: This metric uses the two-sample Kolmogorov-Smirnov test to compare the distributions of continuous columns using the empirical CDF
-    - ContinuousKLDivergence: This approximates the KL divergence by binning the continuous values to turn them into categorical values and then computing the relative entropy
+    - ContinuousKLDivergence: This approximates the KL divergence by binning the continuous values to turn them into categorical values
+    and then computing the relative entropy
 
     :param synth_df: Synthetic data without any identifiers
     :param real_df: Real data without any identifiers
@@ -52,8 +53,8 @@ def evaluate_synthetic(
 
     return {
         row['metric'] : row['normalized_score']
-            for _, row in result.iterrows()
-        }
+        for _, row in result.iterrows()
+    }
 
 
 def ks_test(
@@ -74,6 +75,7 @@ def ks_test(
     rvs, cdf = pdf[predCol].values, pdf[labelCol].values
 
     return kstest(rvs, cdf).statistic
+
 
 def kl_divergence(
     df : DataFrame,
@@ -208,8 +210,9 @@ class QualityControlObjective(ABC):
                              .join(item_features, on=self._itemKeyCol, how='left')
 
         pred_df = self._resp_func.transform(feature_df)
-        objective = 1 - ks_test(pred_df, self._predictionCol, self._labelCol) +\
-                    kl_divergence(pred_df, self._predictionCol, self._labelCol)
+        objective = (1
+                     - ks_test(pred_df, self._predictionCol, self._labelCol)
+                     + kl_divergence(pred_df, self._predictionCol, self._labelCol))
 
         metrics_values = []
         for r, t in zip((real_recs, synthetic_recs), (real_ground_truth, synthetic_ground_truth)):
@@ -323,9 +326,9 @@ class EvaluateMetrics(ABC):
 
         if len(self._replay_metrics) > 0:
             exp = Experiment(
-                test=df.filter(self._filter)\
-                    .drop(self._predictionCol)\
-                    .withColumnRenamed(self._labelCol, 'relevance'),
+                test=df.filter(self._filter)
+                       .drop(self._predictionCol)
+                       .withColumnRenamed(self._labelCol, 'relevance'),
                 metrics=self._replay_metrics
             )
             exp.add_result(

@@ -62,7 +62,6 @@ class Simulator(ABC):
         self._log_schema = None
         if log_df is not None:
             self.update_log(log_df, iteration='start')
-            
 
     @property
     def log(self):
@@ -83,7 +82,6 @@ class Simulator(ABC):
     @log_filename.setter
     def log_filename(self, value):
         self._log_filename = value
-
 
     def clear_log(
         self
@@ -142,14 +140,13 @@ class Simulator(ABC):
             self._check_names_and_types(self._log_schema, log.schema)
 
         write_path = str(
-            pathlib.Path(self._data_dir)\
+            pathlib.Path(self._data_dir)
             .joinpath(f'{self.log_filename}/{self.ITER_COLUMN}={iteration}')
         )
         log.write.parquet(write_path)
 
         read_path = str(pathlib.Path(self._data_dir).joinpath(f'{self.log_filename}'))
         self._log = self._spark.read.parquet(read_path)
-
 
     def sample_users(
         self,
@@ -163,7 +160,6 @@ class Simulator(ABC):
         """
 
         return self._user_gen.sample(frac_users)
-
 
     def sample_items(
         self,

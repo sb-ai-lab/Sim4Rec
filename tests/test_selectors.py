@@ -9,6 +9,7 @@ from sim4rec.modules import (
 SEED = 1234
 K = 5
 
+
 @pytest.fixture(scope="function")
 def estimator() -> CrossJoinItemEstimator:
     return CrossJoinItemEstimator(
@@ -17,6 +18,7 @@ def estimator() -> CrossJoinItemEstimator:
         itemKeyColumn='item_id',
         seed=SEED
     )
+
 
 @pytest.fixture(scope="function")
 def transformer(

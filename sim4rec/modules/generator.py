@@ -140,7 +140,7 @@ class RealDataGenerator(GeneratorBase):
 
 
 def set_sdv_seed(seed : int = None):
-    ## this is the only way to fix seed in SDV library
+    # this is the only way to fix seed in SDV library
     np.random.seed(seed)
     random.seed(seed)
     torch.manual_seed(torch.seed() if seed is None else seed)
@@ -327,7 +327,7 @@ class SDVDataGenerator(GeneratorBase, HasParallelizationLevel, HasDevice):
         """
 
         label, id_col_name, model_name, p_level,\
-        device_name, init_seed, model, schema = load(filename)
+            device_name, init_seed, model, schema = load(filename)
 
         generator = SDVDataGenerator(
             label=label,
@@ -341,7 +341,7 @@ class SDVDataGenerator(GeneratorBase, HasParallelizationLevel, HasDevice):
         generator._model = model
         generator._fit_called = True
         generator._schema = schema
-        
+
         try:
             generator.setDevice(device_name)
         except RuntimeError:
@@ -349,7 +349,6 @@ class SDVDataGenerator(GeneratorBase, HasParallelizationLevel, HasDevice):
             generator.setDevice('cpu')
 
         return generator
-
 
 
 class CompositeGenerator(GeneratorBase, HasWeights):
@@ -362,7 +361,7 @@ class CompositeGenerator(GeneratorBase, HasWeights):
         """
         Wrapper for sampling from multiple generators. Use weights
         parameter to control the sampling fraction for each of the
-        generator 
+        generator
 
         :param generators: List of generators
         :param label: Generator string label
@@ -396,7 +395,7 @@ class CompositeGenerator(GeneratorBase, HasWeights):
         can call this method to not perform generate() separately on
         each generator
 
-        :param num_samples: Total number of samples to generate 
+        :param num_samples: Total number of samples to generate
         """
 
         weights = self.getWeights()

@@ -3,6 +3,7 @@ from pyspark.sql import DataFrame, SparkSession
 
 SEED = 1234
 
+
 @pytest.fixture(scope="session")
 def spark() -> SparkSession:
     return SparkSession.builder\
@@ -47,6 +48,7 @@ def items_df(spark: SparkSession) -> DataFrame:
         data=data,
         schema=['item_id', 'item_attr_1', 'item_attr_2', 'item_attr_3']
     )
+
 
 @pytest.fixture(scope="session")
 def log_df(spark: SparkSession) -> DataFrame:

@@ -30,7 +30,6 @@ class Encoder(torch.nn.Module):
             for _in, _out in zip(input_dims[:-1], input_dims[1:])
         ])
 
-
     def forward(self, X):
         X = F.normalize(X, p=2)
         for layer in self._layers[:-1]:
@@ -56,7 +55,6 @@ class Decoder(torch.nn.Module):
             torch.nn.Linear(_in, _out)
             for _in, _out in zip(input_dims[:-1], input_dims[1:])
         ])
-
 
     def forward(self, X):
         for layer in self._layers[:-1]:
@@ -117,8 +115,6 @@ class EncoderEstimator(Estimator,
         self._num_loader_workers = num_loader_workers
         self._max_iter = max_iter
 
-        
-
     def _fit(
         self,
         df : DataFrame
@@ -134,7 +130,7 @@ class EncoderEstimator(Estimator,
         torch.manual_seed(torch.seed() if seed is None else seed)
 
         train_loader = DataLoader(X, batch_size=self._batch_size,
-            shuffle=True, num_workers=self._num_loader_workers)
+                                  shuffle=True, num_workers=self._num_loader_workers)
 
         encoder = Encoder(
             input_dim=self._input_dim,

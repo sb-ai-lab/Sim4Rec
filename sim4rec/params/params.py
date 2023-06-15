@@ -2,8 +2,9 @@ import sys
 import numpy as np
 from pyspark.ml.param.shared import Params, Param, TypeConverters
 
+
 class HasUserKeyColumn(Params):
-    
+
     userKeyColumn = Param(
         Params._dummy(),
         "userKeyColumn",
@@ -22,7 +23,7 @@ class HasUserKeyColumn(Params):
 
 
 class HasItemKeyColumn(Params):
-    
+
     itemKeyColumn = Param(
         Params._dummy(),
         "itemKeyColumn",

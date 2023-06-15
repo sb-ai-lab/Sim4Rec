@@ -19,6 +19,7 @@ from sim4rec.response import CosineSimilatiry
 
 SEED = 1234
 
+
 @pytest.fixture(scope="module")
 def real_users_gen(users_df : DataFrame) -> RealDataGenerator:
     gen = RealDataGenerator(label='real', seed=SEED)
@@ -26,6 +27,7 @@ def real_users_gen(users_df : DataFrame) -> RealDataGenerator:
     gen.generate(5)
 
     return gen
+
 
 @pytest.fixture(scope="module")
 def synth_users_gen(users_df : DataFrame) -> SDVDataGenerator:
@@ -42,6 +44,7 @@ def synth_users_gen(users_df : DataFrame) -> SDVDataGenerator:
 
     return gen
 
+
 @pytest.fixture(scope="module")
 def comp_users_gen(
     real_users_gen : RealDataGenerator,
@@ -53,6 +56,7 @@ def comp_users_gen(
         weights=[0.5, 0.5]
     )
 
+
 @pytest.fixture(scope="module")
 def real_items_gen(items_df : DataFrame) -> RealDataGenerator:
     gen = RealDataGenerator(label='real', seed=SEED)
@@ -60,6 +64,7 @@ def real_items_gen(items_df : DataFrame) -> RealDataGenerator:
     gen.generate(5)
 
     return gen
+
 
 @pytest.fixture(scope="module")
 def selector(items_df : DataFrame) -> CrossJoinItemTransformer:
@@ -71,6 +76,7 @@ def selector(items_df : DataFrame) -> CrossJoinItemTransformer:
     )
     return estimator.fit(items_df)
 
+
 @pytest.fixture(scope="module")
 def pipeline() -> PipelineModel:
     va_left = VectorAssembler(inputCols=['user_attr_1', 'user_attr_2'], outputCol='__v1')
@@ -79,6 +85,7 @@ def pipeline() -> PipelineModel:
     c = CosineSimilatiry(inputCols=['__v1', '__v2'], outputCol='response')
 
     return PipelineModel(stages=[va_left, va_right, c])
+
 
 @pytest.fixture(scope="function")
 def simulator_empty(
@@ -97,6 +104,7 @@ def simulator_empty(
         data_dir=str(tmp_path / 'sim_empty'),
         spark_session=spark
     )
+
 
 @pytest.fixture(scope="function")
 def simulator_with_log(
@@ -131,6 +139,7 @@ def test_simulator_init(
     assert simulator_with_log._log.count() == 5
     assert os.path.isdir(f'{simulator_with_log._data_dir}/{simulator_with_log.log_filename}/{Simulator.ITER_COLUMN}=start')
 
+
 def test_simulator_clearlog(
     simulator_with_log : Simulator
 ):
@@ -138,6 +147,7 @@ def test_simulator_clearlog(
 
     assert simulator_with_log.log is None
     assert simulator_with_log._log_schema is None
+
 
 def test_simulator_updatelog(
     simulator_empty : Simulator,
@@ -157,6 +167,7 @@ def test_simulator_updatelog(
     assert os.path.isdir(f'{simulator_with_log._data_dir}/{simulator_with_log.log_filename}/{Simulator.ITER_COLUMN}=start')
     assert os.path.isdir(f'{simulator_with_log._data_dir}/{simulator_with_log.log_filename}/{Simulator.ITER_COLUMN}=0')
 
+
 def test_simulator_sampleusers(
     simulator_empty : Simulator
 ):
@@ -170,6 +181,7 @@ def test_simulator_sampleusers(
     assert len(sampled1) == 2
     assert len(sampled2) == 4
 
+
 def test_simulator_sampleitems(
     simulator_empty : Simulator
 ):
@@ -182,6 +194,7 @@ def test_simulator_sampleitems(
 
     assert len(sampled1) == 2
     assert len(sampled2) == 2
+
 
 def test_simulator_getuseritem(
     simulator_with_log : Simulator,
@@ -198,6 +211,7 @@ def test_simulator_getuseritem(
     assert 'item_id' in pairs.columns
 
     assert set(log.toPandas()['user_id']) == set([0, 1, 2])
+
 
 def test_simulator_responses(
     simulator_empty : Simulator,

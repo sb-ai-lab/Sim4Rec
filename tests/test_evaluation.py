@@ -13,6 +13,7 @@ from sim4rec.response import ConstantResponse
 
 from replay.metrics import NDCG, Precision
 
+
 @pytest.fixture(scope="function")
 def evaluator() -> EvaluateMetrics:
     return EvaluateMetrics(
@@ -24,6 +25,7 @@ def evaluator() -> EvaluateMetrics:
         replay_metrics={NDCG() : [2, 3], Precision() : 2},
         mllib_metrics=['mse', 'f1', 'areaUnderROC']
     )
+
 
 @pytest.fixture(scope='module')
 def objective() -> QualityControlObjective:
@@ -37,6 +39,7 @@ def objective() -> QualityControlObjective:
         replay_metrics={NDCG() : 3, Precision() : 2},
     )
 
+
 @pytest.fixture(scope="module")
 def response_df(spark : SparkSession) -> DataFrame:
     data = [
@@ -48,6 +51,7 @@ def response_df(spark : SparkSession) -> DataFrame:
         (1, 2, 0.0, 1.0)
     ]
     return spark.createDataFrame(data=data, schema=['user_id', 'item_id', 'relevance', 'response'])
+
 
 def test_evaluate_metrics(
     evaluator : EvaluateMetrics,
@@ -76,6 +80,7 @@ def test_evaluate_metrics(
     assert 'NDCG@3' in result
     assert 'Precision@2' in result
 
+
 def test_evaluate_synthetic(
     users_df : DataFrame
 ):
@@ -92,9 +97,10 @@ def test_evaluate_synthetic(
     assert result['KSTest'] is not None
     assert result['ContinuousKLDivergence'] is not None
 
+
 def test_kstest(
     users_df : DataFrame
-):  
+):
     result = ks_test(
         df=users_df.select('user_attr_1', 'user_attr_2'),
         predCol='user_attr_1',
@@ -103,9 +109,10 @@ def test_kstest(
 
     assert isinstance(result, float)
 
+
 def test_kldiv(
     users_df : DataFrame
-):  
+):
     result = kl_divergence(
         df=users_df.select('user_attr_1', 'user_attr_2'),
         predCol='user_attr_1',
@@ -113,6 +120,7 @@ def test_kldiv(
     )
 
     assert isinstance(result, float)
+
 
 def test_qualitycontrolobjective(
     log_df : DataFrame,
