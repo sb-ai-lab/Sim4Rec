@@ -34,6 +34,7 @@ pytest = "*"
 Sphinx = "*"
 sphinx-rtd-theme = "*"
 sphinx-autodoc-typehints = "*"
+ghp-import = "*"
 
 [build-system]
 requires = ["poetry-core>=1.0.0"]
