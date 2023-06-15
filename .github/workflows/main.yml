@@ -25,7 +25,7 @@ jobs:
         run: |
           python -m venv venv
           . ./venv/bin/activate
-          pip install --upgrade pip wheel poetry lightfm pycodestyle pylint
+          pip install --upgrade pip wheel poetry lightfm pycodestyle pylint pytest-cov
 
           poetry cache clear pypi --all
           poetry lock
@@ -46,4 +46,4 @@ jobs:
       - name: pytest
         run: |
           . ./venv/bin/activate
-          pytest
+          pytest --cov=sim4rec --cov-report=term-missing --doctest-modules sim4rec --cov-fail-under=90 tests
