@@ -7,7 +7,7 @@ from pyspark.sql import DataFrame
 from pyspark.ml import Transformer, PipelineModel
 
 from replay.session_handler import State
-from sim4rec.modules import GeneratorBase
+from sim4rec.modules.generator import GeneratorBase
 
 
 # pylint: disable=too-many-instance-attributes

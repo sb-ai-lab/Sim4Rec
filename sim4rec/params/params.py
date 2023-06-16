@@ -52,6 +52,7 @@ class HasSeed(Params):
 
 
 class HasSeedSequence(Params):
+    _rng : np.random.Generator
 
     current_seed = Param(
         Params._dummy(),
@@ -66,9 +67,6 @@ class HasSeedSequence(Params):
         "Sequence initial seed",
         typeConverter=TypeConverters.toInt
     )
-
-    def __init__(self):
-        self._rng = None
 
     def initSeedSequence(self, value):
         self._rng = np.random.default_rng(value)
