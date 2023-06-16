@@ -22,6 +22,7 @@ class EmptyDataFrameError(Exception):
     pass
 
 
+# pylint: disable=too-many-ancestors
 class VectorElementExtractor(Transformer,
                              HasInputCol, HasOutputCol,
                              DefaultParamsReadable, DefaultParamsWritable):
@@ -66,7 +67,7 @@ class VectorElementExtractor(Transformer,
 
     def _transform(
         self,
-        df : DataFrame
+        dataset : DataFrame
     ):
         index = self.getIndex()
 
@@ -77,7 +78,7 @@ class VectorElementExtractor(Transformer,
         inputCol = self.getInputCol()
         outputCol = self.getOutputCol()
 
-        return df.withColumn(outputCol, el_udf(inputCol))
+        return dataset.withColumn(outputCol, el_udf(inputCol))
 
 
 def save(obj : object, filename : str):

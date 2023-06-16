@@ -10,11 +10,13 @@ from replay.session_handler import State
 from sim4rec.modules import GeneratorBase
 
 
+# pylint: disable=too-many-instance-attributes
 class Simulator(ABC):
 
     ITER_COLUMN = '__iter'
     DEFAULT_LOG_FILENAME = 'log.parquet'
 
+    # pylint: disable=too-many-arguments
     def __init__(
         self,
         user_gen : GeneratorBase,

@@ -3,6 +3,7 @@ from typing import List, Union, Dict, Optional
 
 import numpy as np
 from scipy.stats import kstest
+# pylint: disable=no-name-in-module
 from scipy.special import kl_div
 
 import pyspark.sql.functions as sf
@@ -28,11 +29,14 @@ def evaluate_synthetic(
     Evaluates the quality of synthetic data against real. The following
     metrics will be calculated:
 
-    - LogisticDetection: The metric evaluates how hard it is to distinguish the synthetic data from the real data by using a Logistic regression model
-    - SVCDetection: The metric evaluates how hard it is to distinguish the synthetic data from the real data by using a C-Support Vector Classification model
-    - KSTest: This metric uses the two-sample Kolmogorov-Smirnov test to compare the distributions of continuous columns using the empirical CDF
-    - ContinuousKLDivergence: This approximates the KL divergence by binning the continuous values to turn them into categorical values
-    and then computing the relative entropy
+    - LogisticDetection: The metric evaluates how hard it is to distinguish the synthetic
+    data from the real data by using a Logistic regression model
+    - SVCDetection: The metric evaluates how hard it is to distinguish the synthetic data
+    from the real data by using a C-Support Vector Classification model
+    - KSTest: This metric uses the two-sample Kolmogorov-Smirnov test to compare
+    the distributions of continuous columns using the empirical CDF
+    - ContinuousKLDivergence: This approximates the KL divergence by binning the continuous values
+    to turn them into categorical values and then computing the relative entropy
 
     :param synth_df: Synthetic data without any identifiers
     :param real_df: Real data without any identifiers
@@ -107,7 +111,9 @@ def kl_divergence(
     return 1 / (1 + np.sum(kl_div(f_obs, f_exp)))
 
 
+# pylint: disable=too-few-public-methods
 class QualityControlObjective(ABC):
+    # pylint: disable=too-many-arguments
     def __init__(
         self,
         userKeyCol : str,
@@ -175,6 +181,7 @@ class QualityControlObjective(ABC):
         self._resp_func = response_function
         self._replay_metrics = replay_metrics
 
+    # pylint: disable=too-many-arguments
     def __call__(
         self,
         test_log : DataFrame,
@@ -234,6 +241,7 @@ class QualityControlObjective(ABC):
         return objective
 
 
+# pylint: disable=too-few-public-methods
 class EvaluateMetrics(ABC):
 
     REGRESSION_METRICS = set(['rmse', 'mse', 'r2', 'mae', 'var'])
@@ -246,6 +254,7 @@ class EvaluateMetrics(ABC):
     ])
     BINARY_METRICS = set(['areaUnderROC', 'areaUnderPR'])
 
+    # pylint: disable=too-many-arguments
     def __init__(
         self,
         userKeyCol : str,
@@ -294,7 +303,7 @@ class EvaluateMetrics(ABC):
         self._itemKeyCol = itemKeyCol
         self._predictionCol = predictionCol
         self._labelCol = labelCol
-        self._filter = (sf.col(self._labelCol) >= replay_label_filter)
+        self._filter = sf.col(self._labelCol) >= replay_label_filter
 
         if isinstance(mllib_metrics, str):
             mllib_metrics = [mllib_metrics]

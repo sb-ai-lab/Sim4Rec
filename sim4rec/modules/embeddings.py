@@ -66,6 +66,7 @@ class Decoder(torch.nn.Module):
         return X
 
 
+# pylint: disable=too-many-ancestors
 class EncoderEstimator(Estimator,
                        HasInputCols,
                        HasOutputCols,
@@ -73,6 +74,7 @@ class EncoderEstimator(Estimator,
                        HasSeed,
                        DefaultParamsReadable,
                        DefaultParamsWritable):
+    # pylint: disable=too-many-arguments
     def __init__(
         self,
         inputCols : List[str],
@@ -115,9 +117,10 @@ class EncoderEstimator(Estimator,
         self._num_loader_workers = num_loader_workers
         self._max_iter = max_iter
 
+    # pylint: disable=too-many-locals, not-callable
     def _fit(
         self,
-        df : DataFrame
+        dataset : DataFrame
     ):
         inputCols = self.getInputCols()
         outputCols = self.getOutputCols()
@@ -125,7 +128,7 @@ class EncoderEstimator(Estimator,
         seed = self.getSeed()
         device = torch.device(self.getDevice())
 
-        X = df.select(*inputCols).toPandas().values
+        X = dataset.select(*inputCols).toPandas().values
 
         torch.manual_seed(torch.seed() if seed is None else seed)
 
@@ -148,7 +151,7 @@ class EncoderEstimator(Estimator,
         optimizer = opt.Adam(model.parameters(), lr=self._lr)
         crit = torch.nn.MSELoss()
 
-        for i in range(self._max_iter):
+        for _ in range(self._max_iter):
             loss = 0
             for X_batch in train_loader:
                 X_batch = X_batch.float().to(device)
@@ -210,9 +213,10 @@ class EncoderTransformer(Transformer,
 
         self._encoder.to(torch.device(value))
 
+    # pylint: disable=not-callable
     def _transform(
         self,
-        df : DataFrame
+        dataset : DataFrame
     ):
         inputCols = self.getInputCols()
         outputCols = self.getOutputCols()
@@ -233,4 +237,4 @@ class EncoderTransformer(Transformer,
             [st.StructField(c, st.FloatType()) for c in outputCols]
         )
 
-        return df.mapInPandas(encode, schema)
+        return dataset.mapInPandas(encode, schema)

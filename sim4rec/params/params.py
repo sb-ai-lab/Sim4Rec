@@ -12,9 +12,6 @@ class HasUserKeyColumn(Params):
         typeConverter=TypeConverters.toString
     )
 
-    def __init__(self):
-        super().__init__()
-
     def setUserKeyColumn(self, value):
         return self._set(userKeyColumn=value)
 
@@ -31,9 +28,6 @@ class HasItemKeyColumn(Params):
         typeConverter=TypeConverters.toString
     )
 
-    def __init__(self):
-        super().__init__()
-
     def setItemKeyColumn(self, value):
         return self._set(itemKeyColumn=value)
 
@@ -49,9 +43,6 @@ class HasSeed(Params):
         "Random state seed",
         typeConverter=TypeConverters.toInt
     )
-
-    def __init__(self):
-        super().__init__()
 
     def setSeed(self, value):
         return self._set(seed=value)
@@ -77,7 +68,7 @@ class HasSeedSequence(Params):
     )
 
     def __init__(self):
-        super().__init__()
+        self._rng = None
 
     def initSeedSequence(self, value):
         self._rng = np.random.default_rng(value)
@@ -105,9 +96,6 @@ class HasWeights(Params):
         typeConverter=TypeConverters.toListFloat
     )
 
-    def __init__(self):
-        super().__init__()
-
     def setWeights(self, value):
         return self._set(weights=value)
 
@@ -123,9 +111,6 @@ class HasMean(Params):
         "Mean parameter of normal distribution",
         typeConverter=TypeConverters.toFloat
     )
-
-    def __init__(self):
-        super().__init__()
 
     def setMean(self, value):
         return self._set(mean=value)
@@ -143,9 +128,6 @@ class HasStandardDeviation(Params):
         typeConverter=TypeConverters.toFloat
     )
 
-    def __init__(self):
-        super().__init__()
-
     def setStandardDeviation(self, value):
         return self._set(std=value)
 
@@ -162,9 +144,6 @@ class HasClipNegative(Params):
         typeConverter=TypeConverters.toBoolean
     )
 
-    def __init__(self):
-        super().__init__()
-
     def setClipNegative(self, value):
         return self._set(clipNegative=value)
 
@@ -179,9 +158,6 @@ class HasConstantValue(Params):
         "Constant value parameter",
         typeConverter=TypeConverters.toFloat
     )
-
-    def __init__(self):
-        super().__init__()
 
     def setConstantValue(self, value):
         return self._set(constantValue=value)
@@ -198,9 +174,6 @@ class HasLabel(Params):
         typeConverter=TypeConverters.toString
     )
 
-    def __init__(self):
-        super().__init__()
-
     def setLabel(self, value):
         return self._set(label=value)
 
@@ -215,9 +188,6 @@ class HasDevice(Params):
         "Name of a device to use",
         typeConverter=TypeConverters.toString
     )
-
-    def __init__(self):
-        super().__init__()
 
     def setDevice(self, value):
         return self._set(device=value)
@@ -234,9 +204,6 @@ class HasDataSize(Params):
         typeConverter=TypeConverters.toInt
     )
 
-    def __init__(self):
-        super().__init__()
-
     def setDataSize(self, value):
         return self._set(data_size=value)
 
@@ -251,9 +218,6 @@ class HasParallelizationLevel(Params):
         "Level of parallelization",
         typeConverter=TypeConverters.toInt
     )
-
-    def __init__(self):
-        super().__init__()
 
     def setParallelizationLevel(self, value):
         return self._set(parallelizationLevel=value)

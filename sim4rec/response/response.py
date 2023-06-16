@@ -18,6 +18,7 @@ from sim4rec.params import (
 )
 
 
+# pylint: disable=too-many-ancestors
 class ActionModelEstimator(Estimator,
                            HasOutputCol,
                            DefaultParamsReadable,
@@ -45,6 +46,7 @@ class ActionModelEstimator(Estimator,
         return self._set(**self._input_kwargs)
 
 
+# pylint: disable=too-many-ancestors
 class ActionModelTransformer(Transformer,
                              HasOutputCol,
                              DefaultParamsReadable,
@@ -74,6 +76,7 @@ class ActionModelTransformer(Transformer,
         return self._set(**self._input_kwargs)
 
 
+# pylint: disable=too-many-ancestors
 class BernoulliResponse(ActionModelTransformer,
                         HasInputCol,
                         HasSeedSequence):
@@ -99,23 +102,25 @@ class BernoulliResponse(ActionModelTransformer,
 
     def _transform(
         self,
-        df : DataFrame
+        dataset : DataFrame
     ):
         inputCol = self.getInputCol()
         outputCol = self.getOutputCol()
         seed = self.getNextSeed()
 
-        return df.withColumn(
+        return dataset.withColumn(
             outputCol,
             sf.when(sf.rand(seed=seed) <= sf.col(inputCol), 1).otherwise(0)
         )
 
 
+# pylint: disable=too-many-ancestors
 class NoiseResponse(ActionModelTransformer,
                     HasMean,
                     HasStandardDeviation,
                     HasClipNegative,
                     HasSeedSequence):
+    # pylint: disable=too-many-arguments
     def __init__(
         self,
         mu : float = None,
@@ -142,7 +147,7 @@ class NoiseResponse(ActionModelTransformer,
 
     def _transform(
         self,
-        df : DataFrame
+        dataset : DataFrame
     ):
         mu = self.getMean()
         sigma = self.getStandardDeviation()
@@ -154,9 +159,10 @@ class NoiseResponse(ActionModelTransformer,
         if clip_negative:
             expr = sf.greatest(expr, sf.lit(0))
 
-        return df.withColumn(outputCol, expr)
+        return dataset.withColumn(outputCol, expr)
 
 
+# pylint: disable=too-many-ancestors
 class ConstantResponse(ActionModelTransformer,
                        HasConstantValue):
     def __init__(
@@ -177,14 +183,15 @@ class ConstantResponse(ActionModelTransformer,
 
     def _transform(
         self,
-        df : DataFrame
+        dataset : DataFrame
     ):
         value = self.getConstantValue()
         outputColumn = self.getOutputCol()
 
-        return df.withColumn(outputColumn, sf.lit(value))
+        return dataset.withColumn(outputColumn, sf.lit(value))
 
 
+# pylint: disable=too-many-ancestors
 class CosineSimilatiry(ActionModelTransformer,
                        HasInputCols):
     def __init__(
@@ -209,7 +216,7 @@ class CosineSimilatiry(ActionModelTransformer,
 
     def _transform(
         self,
-        df : DataFrame
+        dataset : DataFrame
     ):
         inputCols = self.getInputCols()
         outputCol = self.getOutputCol()
@@ -226,12 +233,13 @@ class CosineSimilatiry(ActionModelTransformer,
 
         cos_udf = sf.udf(cosine_similarity, st.DoubleType())
 
-        return df.withColumn(
+        return dataset.withColumn(
             outputCol,
             cos_udf(sf.col(inputCols[0]), sf.col(inputCols[1]))
         )
 
 
+# pylint: disable=too-many-ancestors
 class ParametricResponseFunction(ActionModelTransformer,
                                  HasInputCols,
                                  HasWeights):
@@ -254,13 +262,13 @@ class ParametricResponseFunction(ActionModelTransformer,
 
     def _transform(
         self,
-        df : DataFrame
+        dataset : DataFrame
     ):
         inputCols = self.getInputCols()
         outputCol = self.getOutputCol()
         weights = self.getWeights()
 
-        return df.withColumn(
+        return dataset.withColumn(
             outputCol,
             sum([
                 sf.col(c) * weights[i]

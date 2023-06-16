@@ -89,6 +89,7 @@ class GeneratorBase(ABC, HasLabel, HasDataSize, HasSeedSequence):
 
 
 class RealDataGenerator(GeneratorBase):
+    _source_df : DataFrame
     """
     Real data generator, which can sample from existing dataframe
     """
@@ -146,6 +147,7 @@ def set_sdv_seed(seed : int = None):
     torch.manual_seed(torch.seed() if seed is None else seed)
 
 
+# pylint: disable=too-many-ancestors
 class SDVDataGenerator(GeneratorBase, HasParallelizationLevel, HasDevice):
 
     SEED_COLUMN_NAME = '__seed'
@@ -157,6 +159,7 @@ class SDVDataGenerator(GeneratorBase, HasParallelizationLevel, HasDevice):
         'tvae' : TVAE
     }
 
+    # pylint: disable=too-many-arguments
     def __init__(
         self,
         label : str,
@@ -186,6 +189,8 @@ class SDVDataGenerator(GeneratorBase, HasParallelizationLevel, HasDevice):
         self._id_col_name = id_column_name
         self._model_name = model_name
         self.setDevice(device_name)
+        self._model = None
+        self._schema = None
 
     def fit(
         self,
@@ -217,7 +222,7 @@ class SDVDataGenerator(GeneratorBase, HasParallelizationLevel, HasDevice):
 
     def setDevice(
         self,
-        device_name : str
+        value : str
     ) -> None:
         """
         Changes the current device. Note, that for gaussiancopula
@@ -226,10 +231,10 @@ class SDVDataGenerator(GeneratorBase, HasParallelizationLevel, HasDevice):
         :param device_name: PyTorch device name
         """
 
-        super().setDevice(device_name)
+        super().setDevice(value)
 
         if self._model_name != 'gaussiancopula' and self._fit_called:
-            self._model._model.set_device(torch.device(device_name))
+            self._model._model.set_device(torch.device(value))
 
     def generate(
         self,
@@ -351,6 +356,7 @@ class SDVDataGenerator(GeneratorBase, HasParallelizationLevel, HasDevice):
         return generator
 
 
+# pylint: disable=too-many-ancestors
 class CompositeGenerator(GeneratorBase, HasWeights):
     def __init__(
         self,
@@ -426,7 +432,9 @@ class CompositeGenerator(GeneratorBase, HasWeights):
 
         for i in range(len(data_sizes)):
             if num_required_samples[i] > data_sizes[i]:
-                raise ValueError(f'Not enough samples in generator {self._generators[i].getLabel()}')
+                raise ValueError(
+                    f'Not enough samples in generator {self._generators[i].getLabel()}'
+                )
 
         generator_fracs = []
         for n, s in zip(num_required_samples, data_sizes):

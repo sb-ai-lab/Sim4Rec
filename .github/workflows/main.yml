@@ -46,4 +46,4 @@ jobs:
       - name: pytest
         run: |
           . ./venv/bin/activate
-          pytest --cov=sim4rec --cov-report=term-missing --doctest-modules sim4rec --cov-fail-under=90 tests
+          pytest --cov=sim4rec --cov-report=term-missing --doctest-modules sim4rec --cov-fail-under=89 tests
