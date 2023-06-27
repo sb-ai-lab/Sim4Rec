@@ -22,14 +22,15 @@ from sim4rec.utils import (
 
 
 class GeneratorBase(ABC, HasLabel, HasDataSize, HasSeedSequence):
+    """
+    Base class for data generators
+    """
     def __init__(
         self,
         label : str,
         seed : int = None
     ):
         """
-        Base class for data generators
-
         :param label: Generator string label
         :param seed: Fixes seed sequence to use during multiple
             generator calls, defaults to None
@@ -89,10 +90,10 @@ class GeneratorBase(ABC, HasLabel, HasDataSize, HasSeedSequence):
 
 
 class RealDataGenerator(GeneratorBase):
-    _source_df : DataFrame
     """
     Real data generator, which can sample from existing dataframe
     """
+    _source_df : DataFrame
 
     def fit(
         self,
@@ -141,6 +142,9 @@ class RealDataGenerator(GeneratorBase):
 
 
 def set_sdv_seed(seed : int = None):
+    """
+    Fixes seed for SDV
+    """
     # this is the only way to fix seed in SDV library
     np.random.seed(seed)
     random.seed(seed)
@@ -149,6 +153,9 @@ def set_sdv_seed(seed : int = None):
 
 # pylint: disable=too-many-ancestors
 class SDVDataGenerator(GeneratorBase, HasParallelizationLevel, HasDevice):
+    """
+    Synthetic data generator with a bunch of models from SDV library
+    """
 
     SEED_COLUMN_NAME = '__seed'
 
@@ -170,8 +177,6 @@ class SDVDataGenerator(GeneratorBase, HasParallelizationLevel, HasDevice):
         seed : int = None
     ):
         """
-        Synthetic data generator with a bunch of models from SDV library
-
         :param label: Generator string label
         :param id_column_name: Column name for identifier
         :param model_name: Name of a SDV model. Possible values are:
@@ -358,6 +363,11 @@ class SDVDataGenerator(GeneratorBase, HasParallelizationLevel, HasDevice):
 
 # pylint: disable=too-many-ancestors
 class CompositeGenerator(GeneratorBase, HasWeights):
+    """
+    Wrapper for sampling from multiple generators. Use weights
+    parameter to control the sampling fraction for each of the
+    generator
+    """
     def __init__(
         self,
         generators : List[GeneratorBase],
@@ -365,10 +375,6 @@ class CompositeGenerator(GeneratorBase, HasWeights):
         weights : Iterable = None,
     ):
         """
-        Wrapper for sampling from multiple generators. Use weights
-        parameter to control the sampling fraction for each of the
-        generator
-
         :param generators: List of generators
         :param label: Generator string label
         :param weights: Weights for each of the generator. Weights

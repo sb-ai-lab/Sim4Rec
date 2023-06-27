@@ -15,10 +15,12 @@ from pyspark import keyword_only
 
 
 class NotFittedError(Exception):
+    # pylint: disable=missing-class-docstring
     pass
 
 
 class EmptyDataFrameError(Exception):
+    # pylint: disable=missing-class-docstring
     pass
 
 
@@ -26,6 +28,9 @@ class EmptyDataFrameError(Exception):
 class VectorElementExtractor(Transformer,
                              HasInputCol, HasOutputCol,
                              DefaultParamsReadable, DefaultParamsWritable):
+    """
+    Extracts element at index from array column
+    """
 
     index = Param(
         Params._dummy(),
@@ -35,9 +40,16 @@ class VectorElementExtractor(Transformer,
     )
 
     def setIndex(self, value):
+        """
+        Sets index to a certain value
+        :param value: Value to set index of an element
+        """
         return self._set(index=value)
 
     def getIndex(self):
+        """
+        Returns index of element
+        """
         return self.getOrDefault(self.index)
 
     @keyword_only
@@ -48,7 +60,6 @@ class VectorElementExtractor(Transformer,
         index : int = None
     ):
         """
-        Extracts element at index from array column
         :param inputCol: Input column with array
         :param outputCol: Output column name
         :param index: Index of an element within array
@@ -63,6 +74,9 @@ class VectorElementExtractor(Transformer,
         outputCol : str = None,
         index : int = None
     ):
+        """
+        Sets parameters for extractor
+        """
         return self._set(**self._input_kwargs)
 
     def _transform(
