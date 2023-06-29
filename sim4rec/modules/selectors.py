@@ -1,3 +1,4 @@
+# pylint: disable=no-member,unused-argument,too-many-ancestors,abstract-method
 from pyspark.sql import functions as sf
 from pyspark.sql import DataFrame
 from pyspark.ml import Transformer, Estimator
@@ -6,7 +7,6 @@ from pyspark import keyword_only
 from sim4rec.params import HasUserKeyColumn, HasItemKeyColumn, HasSeed, HasSeedSequence
 
 
-# pylint: disable=too-many-ancestors
 class ItemSelectionEstimator(Estimator,
                              HasUserKeyColumn,
                              HasItemKeyColumn,
@@ -36,7 +36,6 @@ class ItemSelectionEstimator(Estimator,
         return self._set(**self._input_kwargs)
 
 
-# pylint: disable=too-many-ancestors
 class ItemSelectionTransformer(Transformer,
                                HasUserKeyColumn,
                                HasItemKeyColumn,
@@ -67,7 +66,6 @@ class ItemSelectionTransformer(Transformer,
         self._set(**self._input_kwargs)
 
 
-# pylint: disable=too-many-ancestors
 class CrossJoinItemEstimator(ItemSelectionEstimator, HasSeed):
     """
     Assigns k items for every user from random items subsample
@@ -120,7 +118,6 @@ class CrossJoinItemEstimator(ItemSelectionEstimator, HasSeed):
         )
 
 
-# pylint: disable=too-many-ancestors
 class CrossJoinItemTransformer(ItemSelectionTransformer, HasSeedSequence):
     """
     Assigns k items for every user from random items subsample

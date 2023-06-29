@@ -1,6 +1,6 @@
 import random
 from abc import ABC, abstractmethod
-from typing import Iterable, List
+from typing import Iterable, List, Optional, Union
 
 import numpy as np
 import pandas as pd
@@ -156,6 +156,7 @@ class SDVDataGenerator(GeneratorBase, HasParallelizationLevel, HasDevice):
     """
     Synthetic data generator with a bunch of models from SDV library
     """
+    _model : Optional[Union[CopulaGAN, CTGAN, GaussianCopula, TVAE]] = None
 
     SEED_COLUMN_NAME = '__seed'
 
@@ -194,7 +195,6 @@ class SDVDataGenerator(GeneratorBase, HasParallelizationLevel, HasDevice):
         self._id_col_name = id_column_name
         self._model_name = model_name
         self.setDevice(device_name)
-        self._model = None
         self._schema = None
 
     def fit(

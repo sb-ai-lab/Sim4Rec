@@ -1,5 +1,5 @@
 # Utility class extensions
-
+# pylint: disable=no-member,unused-argument
 import pickle
 import pyspark.sql.functions as sf
 import pyspark.sql.types as st

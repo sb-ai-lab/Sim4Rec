@@ -1,3 +1,4 @@
+# pylint: disable=no-member,unused-argument,too-many-ancestors,abstract-method
 import math
 from typing import List
 from collections.abc import Iterable
@@ -18,7 +19,6 @@ from sim4rec.params import (
 )
 
 
-# pylint: disable=too-many-ancestors
 class ActionModelEstimator(Estimator,
                            HasOutputCol,
                            DefaultParamsReadable,
@@ -50,7 +50,6 @@ class ActionModelEstimator(Estimator,
         return self._set(**self._input_kwargs)
 
 
-# pylint: disable=too-many-ancestors
 class ActionModelTransformer(Transformer,
                              HasOutputCol,
                              DefaultParamsReadable,
@@ -84,7 +83,6 @@ class ActionModelTransformer(Transformer,
         return self._set(**self._input_kwargs)
 
 
-# pylint: disable=too-many-ancestors
 class BernoulliResponse(ActionModelTransformer,
                         HasInputCol,
                         HasSeedSequence):
@@ -123,7 +121,6 @@ class BernoulliResponse(ActionModelTransformer,
         )
 
 
-# pylint: disable=too-many-ancestors
 class NoiseResponse(ActionModelTransformer,
                     HasMean,
                     HasStandardDeviation,
@@ -172,7 +169,6 @@ class NoiseResponse(ActionModelTransformer,
         return dataset.withColumn(outputCol, expr)
 
 
-# pylint: disable=too-many-ancestors
 class ConstantResponse(ActionModelTransformer,
                        HasConstantValue):
     """
@@ -202,7 +198,6 @@ class ConstantResponse(ActionModelTransformer,
         return dataset.withColumn(outputColumn, sf.lit(value))
 
 
-# pylint: disable=too-many-ancestors
 class CosineSimilatiry(ActionModelTransformer,
                        HasInputCols):
     """
@@ -251,7 +246,6 @@ class CosineSimilatiry(ActionModelTransformer,
         )
 
 
-# pylint: disable=too-many-ancestors
 class ParametricResponseFunction(ActionModelTransformer,
                                  HasInputCols,
                                  HasWeights):
