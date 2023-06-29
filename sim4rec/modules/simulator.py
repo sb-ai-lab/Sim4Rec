@@ -7,14 +7,21 @@ from pyspark.sql import DataFrame
 from pyspark.ml import Transformer, PipelineModel
 
 from replay.session_handler import State
-from sim4rec.modules import GeneratorBase
+from sim4rec.modules.generator import GeneratorBase
 
 
+# pylint: disable=too-many-instance-attributes
 class Simulator(ABC):
+    """
+    Simulator for recommendation systems, which uses the users
+    and items data passed to it, to simulate the users responses
+    to recommended items
+    """
 
     ITER_COLUMN = '__iter'
     DEFAULT_LOG_FILENAME = 'log.parquet'
 
+    # pylint: disable=too-many-arguments
     def __init__(
         self,
         user_gen : GeneratorBase,
@@ -26,10 +33,6 @@ class Simulator(ABC):
         spark_session : SparkSession = None
     ):
         """
-        Simulator for recommendation systems, which uses the users
-        and items data passed to it, to simulate the users responses
-        to recommended items
-
         :param user_gen: Users data generator instance
         :param item_gen: Items data generator instance
         :param log_df: The history log with user-item pairs with other
@@ -62,14 +65,19 @@ class Simulator(ABC):
         self._log_schema = None
         if log_df is not None:
             self.update_log(log_df, iteration='start')
-            
 
     @property
     def log(self):
+        """
+        Returns log
+        """
         return self._log
 
     @property
     def data_dir(self):
+        """
+        Returns directory with saved simulator data
+        """
         return self._data_dir
 
     @data_dir.setter
@@ -78,12 +86,14 @@ class Simulator(ABC):
 
     @property
     def log_filename(self):
+        """
+        Returns name of log file
+        """
         return self._log_filename
 
     @log_filename.setter
     def log_filename(self, value):
         self._log_filename = value
-
 
     def clear_log(
         self
@@ -142,14 +152,13 @@ class Simulator(ABC):
             self._check_names_and_types(self._log_schema, log.schema)
 
         write_path = str(
-            pathlib.Path(self._data_dir)\
+            pathlib.Path(self._data_dir)
             .joinpath(f'{self.log_filename}/{self.ITER_COLUMN}={iteration}')
         )
         log.write.parquet(write_path)
 
         read_path = str(pathlib.Path(self._data_dir).joinpath(f'{self.log_filename}'))
         self._log = self._spark.read.parquet(read_path)
-
 
     def sample_users(
         self,
@@ -163,7 +172,6 @@ class Simulator(ABC):
         """
 
         return self._user_gen.sample(frac_users)
-
 
     def sample_items(
         self,

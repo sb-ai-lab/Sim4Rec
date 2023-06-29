@@ -1,3 +1,4 @@
+# pylint: disable=no-member,unused-argument,too-many-ancestors,abstract-method
 from pyspark.sql import functions as sf
 from pyspark.sql import DataFrame
 from pyspark.ml import Transformer, Estimator
@@ -11,16 +12,15 @@ class ItemSelectionEstimator(Estimator,
                              HasItemKeyColumn,
                              DefaultParamsReadable,
                              DefaultParamsWritable):
+    """
+    Base class for item selection estimator
+    """
     @keyword_only
     def __init__(
         self,
         userKeyColumn : str = None,
         itemKeyColumn : str = None
     ):
-        """
-        Base class for item selection estimator
-        """
-
         super().__init__()
         self.setParams(**self._input_kwargs)
 
@@ -30,6 +30,9 @@ class ItemSelectionEstimator(Estimator,
         userKeyColumn : str = None,
         itemKeyColumn : str = None
     ):
+        """
+        Sets Estimator parameters
+        """
         return self._set(**self._input_kwargs)
 
 
@@ -38,16 +41,16 @@ class ItemSelectionTransformer(Transformer,
                                HasItemKeyColumn,
                                DefaultParamsReadable,
                                DefaultParamsWritable):
+    """
+    Base class for item selection transformer. transform()
+    will be used to create user-item pairs
+    """
     @keyword_only
     def __init__(
         self,
         userKeyColumn : str = None,
         itemKeyColumn : str = None
     ):
-        """
-        Base class for item selection transformer. transform()
-        will be used to create user-item pairs
-        """
         super().__init__()
         self.setParams(**self._input_kwargs)
 
@@ -57,10 +60,16 @@ class ItemSelectionTransformer(Transformer,
         userKeyColumn : str = None,
         itemKeyColumn : str = None
     ):
+        """
+        Sets Transformer parameters
+        """
         self._set(**self._input_kwargs)
 
 
 class CrossJoinItemEstimator(ItemSelectionEstimator, HasSeed):
+    """
+    Assigns k items for every user from random items subsample
+    """
     def __init__(
         self,
         k : int,
@@ -69,8 +78,6 @@ class CrossJoinItemEstimator(ItemSelectionEstimator, HasSeed):
         seed : int = None
     ):
         """
-        Assigns k items for every user from random items subsample
-
         :param k: Number of items for every user
         :param userKeyColumn: Users identifier column, defaults to None
         :param itemKeyColumn: Items identifier column, defaults to None
@@ -86,7 +93,7 @@ class CrossJoinItemEstimator(ItemSelectionEstimator, HasSeed):
 
     def _fit(
         self,
-        df : DataFrame
+        dataset : DataFrame
     ):
         """
         Fits estimator with items dataframe
@@ -98,12 +105,12 @@ class CrossJoinItemEstimator(ItemSelectionEstimator, HasSeed):
         userKeyColumn = self.getUserKeyColumn()
         itemKeyColumn = self.getItemKeyColumn()
         seed = self.getSeed()
-        
-        if itemKeyColumn not in df.columns:
+
+        if itemKeyColumn not in dataset.columns:
             raise ValueError(f'Dataframe has no {itemKeyColumn} column')
 
         return CrossJoinItemTransformer(
-            item_df=df,
+            item_df=dataset,
             k=self._k,
             userKeyColumn=userKeyColumn,
             itemKeyColumn=itemKeyColumn,
@@ -112,6 +119,10 @@ class CrossJoinItemEstimator(ItemSelectionEstimator, HasSeed):
 
 
 class CrossJoinItemTransformer(ItemSelectionTransformer, HasSeedSequence):
+    """
+    Assigns k items for every user from random items subsample
+    """
+    # pylint: disable=too-many-arguments
     def __init__(
         self,
         item_df : DataFrame,
@@ -120,10 +131,6 @@ class CrossJoinItemTransformer(ItemSelectionTransformer, HasSeedSequence):
         itemKeyColumn : str = None,
         seed : int = None
     ):
-        """
-        Assigns k items for every user from random items subsample
-        """
-
         super().__init__(userKeyColumn=userKeyColumn,
                          itemKeyColumn=itemKeyColumn)
 
@@ -134,7 +141,7 @@ class CrossJoinItemTransformer(ItemSelectionTransformer, HasSeedSequence):
 
     def _transform(
         self,
-        df : DataFrame
+        dataset : DataFrame
     ):
         """
         Takes a users dataframe and assings defined number of items
@@ -147,11 +154,11 @@ class CrossJoinItemTransformer(ItemSelectionTransformer, HasSeedSequence):
         itemKeyColumn = self.getItemKeyColumn()
         seed = self.getNextSeed()
 
-        if userKeyColumn not in df.columns:
+        if userKeyColumn not in dataset.columns:
             raise ValueError(f'Dataframe has no {userKeyColumn} column')
 
         random_items = self._item_df.orderBy(sf.rand(seed=seed))\
                                     .limit(self._k)
 
-        return df.select(userKeyColumn)\
-                 .crossJoin(random_items.select(itemKeyColumn))
+        return dataset.select(userKeyColumn)\
+            .crossJoin(random_items.select(itemKeyColumn))

@@ -30,6 +30,7 @@ jupyterlab = "*"
 matplotlib = "*"
 # testing
 pytest = "*"
+pytest-cov = "*"
 # docs
 Sphinx = "*"
 sphinx-rtd-theme = "*"

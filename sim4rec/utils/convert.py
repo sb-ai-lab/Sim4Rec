@@ -5,8 +5,8 @@ from replay.session_handler import State
 
 
 def pandas_to_spark(
-    df : pd.DataFrame,
-    schema = None, 
+    df: pd.DataFrame,
+    schema=None,
     spark_session : SparkSession = None) -> DataFrame:
     """
     Converts pandas DataFrame to spark DataFrame

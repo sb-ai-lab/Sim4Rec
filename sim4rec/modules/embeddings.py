@@ -16,6 +16,9 @@ from sim4rec.params import HasDevice, HasSeed
 
 
 class Encoder(torch.nn.Module):
+    """
+    Encoder layer
+    """
     def __init__(
         self,
         input_dim : int,
@@ -30,8 +33,10 @@ class Encoder(torch.nn.Module):
             for _in, _out in zip(input_dims[:-1], input_dims[1:])
         ])
 
-
     def forward(self, X):
+        """
+        Performs forward pass through layer
+        """
         X = F.normalize(X, p=2)
         for layer in self._layers[:-1]:
             X = layer(X)
@@ -43,6 +48,9 @@ class Encoder(torch.nn.Module):
 
 
 class Decoder(torch.nn.Module):
+    """
+    Decoder layer
+    """
     def __init__(
         self,
         input_dim : int,
@@ -57,8 +65,10 @@ class Decoder(torch.nn.Module):
             for _in, _out in zip(input_dims[:-1], input_dims[1:])
         ])
 
-
     def forward(self, X):
+        """
+        Performs forward pass through layer
+        """
         for layer in self._layers[:-1]:
             X = layer(X)
             X = F.leaky_relu(X)
@@ -68,6 +78,7 @@ class Decoder(torch.nn.Module):
         return X
 
 
+# pylint: disable=too-many-ancestors
 class EncoderEstimator(Estimator,
                        HasInputCols,
                        HasOutputCols,
@@ -75,6 +86,11 @@ class EncoderEstimator(Estimator,
                        HasSeed,
                        DefaultParamsReadable,
                        DefaultParamsWritable):
+    """
+    Estimator for encoder part of the autoencoder pipeline. Trains
+    the encoder to process incoming data into latent representation
+    """
+    # pylint: disable=too-many-arguments
     def __init__(
         self,
         inputCols : List[str],
@@ -88,9 +104,6 @@ class EncoderEstimator(Estimator,
         seed : int = None
     ):
         """
-        Estimator for encoder part of the autoencoder pipeline. Trains
-        the encoder to process incoming data into latent representation
-
         :param inputCols: Column names to process
         :param outputCols: List of output column names per latent coordinate.
             The length of outputCols will determine the embedding dimension size
@@ -117,11 +130,10 @@ class EncoderEstimator(Estimator,
         self._num_loader_workers = num_loader_workers
         self._max_iter = max_iter
 
-        
-
+    # pylint: disable=too-many-locals, not-callable
     def _fit(
         self,
-        df : DataFrame
+        dataset : DataFrame
     ):
         inputCols = self.getInputCols()
         outputCols = self.getOutputCols()
@@ -129,12 +141,12 @@ class EncoderEstimator(Estimator,
         seed = self.getSeed()
         device = torch.device(self.getDevice())
 
-        X = df.select(*inputCols).toPandas().values
+        X = dataset.select(*inputCols).toPandas().values
 
         torch.manual_seed(torch.seed() if seed is None else seed)
 
         train_loader = DataLoader(X, batch_size=self._batch_size,
-            shuffle=True, num_workers=self._num_loader_workers)
+                                  shuffle=True, num_workers=self._num_loader_workers)
 
         encoder = Encoder(
             input_dim=self._input_dim,
@@ -152,7 +164,7 @@ class EncoderEstimator(Estimator,
         optimizer = opt.Adam(model.parameters(), lr=self._lr)
         crit = torch.nn.MSELoss()
 
-        for i in range(self._max_iter):
+        for _ in range(self._max_iter):
             loss = 0
             for X_batch in train_loader:
                 X_batch = X_batch.float().to(device)
@@ -183,6 +195,11 @@ class EncoderTransformer(Transformer,
                          HasDevice,
                          DefaultParamsReadable,
                          DefaultParamsWritable):
+    """
+    Encoder transformer that transforms incoming columns into latent
+    representation. Output data will be appended to dataframe and
+    named according to outputCols parameter
+    """
     def __init__(
         self,
         inputCols : List[str],
@@ -191,10 +208,6 @@ class EncoderTransformer(Transformer,
         device_name : str = 'cpu'
     ):
         """
-        Encoder transformer that transforms incoming columns into latent
-        representation. Output data will be appended to dataframe and
-        named according to outputCols parameter
-
         :param inputCols: Column names to process
         :param outputCols: List of output column names per latent coordinate.
             The length of outputCols must be equal to embedding dimension of
@@ -214,9 +227,10 @@ class EncoderTransformer(Transformer,
 
         self._encoder.to(torch.device(value))
 
+    # pylint: disable=not-callable
     def _transform(
         self,
-        df : DataFrame
+        dataset : DataFrame
     ):
         inputCols = self.getInputCols()
         outputCols = self.getOutputCols()
@@ -237,4 +251,4 @@ class EncoderTransformer(Transformer,
             [st.StructField(c, st.FloatType()) for c in outputCols]
         )
 
-        return df.mapInPandas(encode, schema)
+        return dataset.mapInPandas(encode, schema)

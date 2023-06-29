@@ -13,9 +13,11 @@ from sim4rec.modules import (
 
 SEED = 1234
 
+
 @pytest.fixture(scope="function")
 def real_gen() -> RealDataGenerator:
     return RealDataGenerator(label='real', seed=SEED)
+
 
 @pytest.fixture(scope="function")
 def synth_gen() -> SDVDataGenerator:
@@ -27,6 +29,7 @@ def synth_gen() -> SDVDataGenerator:
         device_name='cpu',
         seed=SEED
     )
+
 
 @pytest.fixture(scope="function")
 def comp_gen(real_gen : RealDataGenerator, synth_gen : SDVDataGenerator) -> CompositeGenerator:
@@ -43,6 +46,7 @@ def test_realdatagenerator_fit(real_gen : RealDataGenerator, users_df : DataFram
     assert real_gen._fit_called
     assert real_gen._source_df.count() == users_df.count()
 
+
 def test_sdvdatagenerator_fit(synth_gen : SDVDataGenerator, users_df : DataFrame):
     synth_gen.fit(users_df)
 
@@ -57,12 +61,14 @@ def test_realdatagenerator_generate(real_gen : RealDataGenerator, users_df : Dat
     assert real_gen._df.count() == 5
     assert real_gen.getDataSize() == 5
 
+
 def test_sdvdatagenerator_generate(synth_gen : SDVDataGenerator, users_df : DataFrame):
     synth_gen.fit(users_df)
 
     assert synth_gen.generate(100).count() == 100
     assert synth_gen._df.count() == 100
     assert synth_gen.getDataSize() == 100
+
 
 def test_compositegenerator_generate(
     real_gen : RealDataGenerator,
@@ -98,6 +104,7 @@ def test_realdatagenerator_sample(real_gen : RealDataGenerator, users_df : DataF
     assert real_gen.sample(0.5).count() == 2
     assert real_gen.sample(0.0).count() == 0
 
+
 def test_sdvdatagenerator_sample(synth_gen : SDVDataGenerator, users_df : DataFrame):
     synth_gen.fit(users_df)
     _ = synth_gen.generate(100)
@@ -105,6 +112,7 @@ def test_sdvdatagenerator_sample(synth_gen : SDVDataGenerator, users_df : DataFr
     assert synth_gen.sample(1.0).count() == 100
     assert synth_gen.sample(0.5).count() == 46
     assert synth_gen.sample(0.0).count() == 0
+
 
 def test_compositegenerator_sample(
     real_gen : RealDataGenerator,
@@ -145,6 +153,7 @@ def test_realdatagenerator_iterdiff(real_gen : RealDataGenerator, users_df : Dat
     assert not generated_1.equals(generated_2)
     assert not sampled_1.equals(sampled_2)
 
+
 def test_sdvdatagenerator_iterdiff(synth_gen : SDVDataGenerator, users_df : DataFrame):
     synth_gen.fit(users_df)
 
@@ -156,6 +165,7 @@ def test_sdvdatagenerator_iterdiff(synth_gen : SDVDataGenerator, users_df : Data
 
     assert not generated_1.equals(generated_2)
     assert not sampled_1.equals(sampled_2)
+
 
 def test_compositegenerator_iterdiff(
     real_gen : RealDataGenerator,
@@ -186,6 +196,7 @@ def test_sdvdatagenerator_partdiff(synth_gen : SDVDataGenerator, users_df : Data
 
     assert not df_1.equals(df_2)
 
+
 def test_sdv_save_load(
     synth_gen : SDVDataGenerator,
     users_df : DataFrame,
@@ -193,7 +204,7 @@ def test_sdv_save_load(
 ):
     synth_gen.fit(users_df)
     synth_gen.save_model(f'{tmp_path}/generator.pkl')
-    
+
     assert os.path.isfile(f'{tmp_path}/generator.pkl')
 
     g = SDVDataGenerator.load(f'{tmp_path}/generator.pkl')

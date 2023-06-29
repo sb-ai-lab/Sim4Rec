@@ -1,3 +1,4 @@
+# pylint: disable=no-member,unused-argument,too-many-ancestors,abstract-method
 import math
 from typing import List
 from collections.abc import Iterable
@@ -22,14 +23,15 @@ class ActionModelEstimator(Estimator,
                            HasOutputCol,
                            DefaultParamsReadable,
                            DefaultParamsWritable):
+    """
+    Base class for response estimator
+    """
     @keyword_only
     def __init__(
         self,
         outputCol : str = None
     ):
         """
-        Base class for response estimator
-
         :param outputCol: Name of the response score column, defaults
             to None
         """
@@ -42,6 +44,9 @@ class ActionModelEstimator(Estimator,
         self,
         outputCol : str = None
     ):
+        """
+        Sets parameters for response estimator
+        """
         return self._set(**self._input_kwargs)
 
 
@@ -49,16 +54,17 @@ class ActionModelTransformer(Transformer,
                              HasOutputCol,
                              DefaultParamsReadable,
                              DefaultParamsWritable):
+    """
+    Base class for response transformer. transform() will be
+    used to calculate score based on inputCols, and write it
+    to outputCol column
+    """
     @keyword_only
     def __init__(
         self,
         outputCol : str = None
     ):
         """
-        Base class for response transformer. transform() will be
-        used to calculate score based on inputCols, and write it
-        to outputCol column
-
         :param outputCol: Name of the response score column, defaults
             to None
         """
@@ -71,12 +77,18 @@ class ActionModelTransformer(Transformer,
         self,
         outputCol : str = None
     ):
+        """
+        Sets parameters for response transformer
+        """
         return self._set(**self._input_kwargs)
 
 
 class BernoulliResponse(ActionModelTransformer,
                         HasInputCol,
                         HasSeedSequence):
+    """
+    Samples responses from probability column
+    """
     def __init__(
         self,
         inputCol : str = None,
@@ -84,8 +96,6 @@ class BernoulliResponse(ActionModelTransformer,
         seed : int = None
     ):
         """
-        Samples responses from probability column
-
         :param inputCol: Probability column name. Probability should
             be in range [0; 1]
         :param outputCol: Output column name
@@ -99,13 +109,13 @@ class BernoulliResponse(ActionModelTransformer,
 
     def _transform(
         self,
-        df : DataFrame
+        dataset : DataFrame
     ):
         inputCol = self.getInputCol()
         outputCol = self.getOutputCol()
         seed = self.getNextSeed()
 
-        return df.withColumn(
+        return dataset.withColumn(
             outputCol,
             sf.when(sf.rand(seed=seed) <= sf.col(inputCol), 1).otherwise(0)
         )
@@ -116,6 +126,10 @@ class NoiseResponse(ActionModelTransformer,
                     HasStandardDeviation,
                     HasClipNegative,
                     HasSeedSequence):
+    # pylint: disable=too-many-arguments
+    """
+    Creates random response sampled from normal distribution
+    """
     def __init__(
         self,
         mu : float = None,
@@ -125,8 +139,6 @@ class NoiseResponse(ActionModelTransformer,
         seed : int = None
     ):
         """
-        Creates random response sampled from normal distribution
-
         :param mu: Mean parameter of normal distribution
         :param sigma: Standard deviation parameter of normal distribution
         :param outputCol: Output column name
@@ -142,7 +154,7 @@ class NoiseResponse(ActionModelTransformer,
 
     def _transform(
         self,
-        df : DataFrame
+        dataset : DataFrame
     ):
         mu = self.getMean()
         sigma = self.getStandardDeviation()
@@ -154,54 +166,56 @@ class NoiseResponse(ActionModelTransformer,
         if clip_negative:
             expr = sf.greatest(expr, sf.lit(0))
 
-        return df.withColumn(outputCol, expr)
+        return dataset.withColumn(outputCol, expr)
 
 
 class ConstantResponse(ActionModelTransformer,
                        HasConstantValue):
+    """
+    Always returns constant valued response
+    """
     def __init__(
         self,
         value : float = 0.0,
         outputCol : str = None
     ):
         """
-        Always returns constant valued response
-
         :param value: Response value
         :param outputCol: Output column name
         """
 
         super().__init__(outputCol=outputCol)
-        
+
         self._set(constantValue=value)
 
     def _transform(
         self,
-        df : DataFrame
+        dataset : DataFrame
     ):
         value = self.getConstantValue()
         outputColumn = self.getOutputCol()
 
-        return df.withColumn(outputColumn, sf.lit(value))
+        return dataset.withColumn(outputColumn, sf.lit(value))
 
 
 class CosineSimilatiry(ActionModelTransformer,
                        HasInputCols):
+    """
+    Calculates the cosine similarity between two vectors.
+    The result is in [0; 1] range
+    """
     def __init__(
         self,
         inputCols : List[str] = None,
         outputCol : str = None
     ):
         """
-        Calculates the cosine similarity between two vectors.
-        The result is in [0; 1] range
-
         :param inputCols: Two column names with dense vectors
         :param outputCol: Output column name
         """
 
         if inputCols is not None and len(inputCols) != 2:
-            raise ValueError('There must be two array columns '\
+            raise ValueError('There must be two array columns '
                              'to calculate cosine similarity')
 
         super().__init__(outputCol=outputCol)
@@ -209,7 +223,7 @@ class CosineSimilatiry(ActionModelTransformer,
 
     def _transform(
         self,
-        df : DataFrame
+        dataset : DataFrame
     ):
         inputCols = self.getInputCols()
         outputCol = self.getOutputCol()
@@ -226,7 +240,7 @@ class CosineSimilatiry(ActionModelTransformer,
 
         cos_udf = sf.udf(cosine_similarity, st.DoubleType())
 
-        return df.withColumn(
+        return dataset.withColumn(
             outputCol,
             cos_udf(sf.col(inputCols[0]), sf.col(inputCols[1]))
         )
@@ -235,6 +249,9 @@ class CosineSimilatiry(ActionModelTransformer,
 class ParametricResponseFunction(ActionModelTransformer,
                                  HasInputCols,
                                  HasWeights):
+    """
+    Calculates response based on the weighted sum of input responses
+    """
     def __init__(
         self,
         inputCols : List[str] = None,
@@ -242,8 +259,6 @@ class ParametricResponseFunction(ActionModelTransformer,
         weights : Iterable = None
     ):
         """
-        Calculates response based on the weighted sum of input responses
-
         :param inputCols: Input responses column names
         :param outputCol: Output column name
         :param weights: Input responses weights
@@ -254,16 +269,16 @@ class ParametricResponseFunction(ActionModelTransformer,
 
     def _transform(
         self,
-        df : DataFrame
+        dataset : DataFrame
     ):
         inputCols = self.getInputCols()
         outputCol = self.getOutputCol()
         weights = self.getWeights()
 
-        return df.withColumn(
+        return dataset.withColumn(
             outputCol,
             sum([
                 sf.col(c) * weights[i]
-                    for i, c in enumerate(inputCols)
-                ])
+                for i, c in enumerate(inputCols)
+            ])
         )
