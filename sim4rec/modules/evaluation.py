@@ -3,6 +3,8 @@ from typing import List, Union, Dict, Optional
 
 import numpy as np
 from scipy.stats import kstest
+# TL;DR scipy.special is a C library, pylint needs python source code
+# https://github.com/pylint-dev/pylint/issues/3703
 # pylint: disable=no-name-in-module
 from scipy.special import kl_div
 
