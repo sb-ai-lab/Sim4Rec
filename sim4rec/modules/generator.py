@@ -1,6 +1,6 @@
 import random
 from abc import ABC, abstractmethod
-from typing import Iterable, List
+from typing import Iterable, List, Optional, Union
 
 import numpy as np
 import pandas as pd
@@ -22,14 +22,15 @@ from sim4rec.utils import (
 
 
 class GeneratorBase(ABC, HasLabel, HasDataSize, HasSeedSequence):
+    """
+    Base class for data generators
+    """
     def __init__(
         self,
         label : str,
         seed : int = None
     ):
         """
-        Base class for data generators
-
         :param label: Generator string label
         :param seed: Fixes seed sequence to use during multiple
             generator calls, defaults to None
@@ -92,6 +93,7 @@ class RealDataGenerator(GeneratorBase):
     """
     Real data generator, which can sample from existing dataframe
     """
+    _source_df : DataFrame
 
     def fit(
         self,
@@ -140,13 +142,21 @@ class RealDataGenerator(GeneratorBase):
 
 
 def set_sdv_seed(seed : int = None):
-    ## this is the only way to fix seed in SDV library
+    """
+    Fixes seed for SDV
+    """
+    # this is the only way to fix seed in SDV library
     np.random.seed(seed)
     random.seed(seed)
     torch.manual_seed(torch.seed() if seed is None else seed)
 
 
+# pylint: disable=too-many-ancestors
 class SDVDataGenerator(GeneratorBase, HasParallelizationLevel, HasDevice):
+    """
+    Synthetic data generator with a bunch of models from SDV library
+    """
+    _model : Optional[Union[CopulaGAN, CTGAN, GaussianCopula, TVAE]] = None
 
     SEED_COLUMN_NAME = '__seed'
 
@@ -157,6 +167,7 @@ class SDVDataGenerator(GeneratorBase, HasParallelizationLevel, HasDevice):
         'tvae' : TVAE
     }
 
+    # pylint: disable=too-many-arguments
     def __init__(
         self,
         label : str,
@@ -167,8 +178,6 @@ class SDVDataGenerator(GeneratorBase, HasParallelizationLevel, HasDevice):
         seed : int = None
     ):
         """
-        Synthetic data generator with a bunch of models from SDV library
-
         :param label: Generator string label
         :param id_column_name: Column name for identifier
         :param model_name: Name of a SDV model. Possible values are:
@@ -186,6 +195,7 @@ class SDVDataGenerator(GeneratorBase, HasParallelizationLevel, HasDevice):
         self._id_col_name = id_column_name
         self._model_name = model_name
         self.setDevice(device_name)
+        self._schema = None
 
     def fit(
         self,
@@ -217,7 +227,7 @@ class SDVDataGenerator(GeneratorBase, HasParallelizationLevel, HasDevice):
 
     def setDevice(
         self,
-        device_name : str
+        value : str
     ) -> None:
         """
         Changes the current device. Note, that for gaussiancopula
@@ -226,10 +236,10 @@ class SDVDataGenerator(GeneratorBase, HasParallelizationLevel, HasDevice):
         :param device_name: PyTorch device name
         """
 
-        super().setDevice(device_name)
+        super().setDevice(value)
 
         if self._model_name != 'gaussiancopula' and self._fit_called:
-            self._model._model.set_device(torch.device(device_name))
+            self._model._model.set_device(torch.device(value))
 
     def generate(
         self,
@@ -327,7 +337,7 @@ class SDVDataGenerator(GeneratorBase, HasParallelizationLevel, HasDevice):
         """
 
         label, id_col_name, model_name, p_level,\
-        device_name, init_seed, model, schema = load(filename)
+            device_name, init_seed, model, schema = load(filename)
 
         generator = SDVDataGenerator(
             label=label,
@@ -341,7 +351,7 @@ class SDVDataGenerator(GeneratorBase, HasParallelizationLevel, HasDevice):
         generator._model = model
         generator._fit_called = True
         generator._schema = schema
-        
+
         try:
             generator.setDevice(device_name)
         except RuntimeError:
@@ -351,8 +361,13 @@ class SDVDataGenerator(GeneratorBase, HasParallelizationLevel, HasDevice):
         return generator
 
 
-
+# pylint: disable=too-many-ancestors
 class CompositeGenerator(GeneratorBase, HasWeights):
+    """
+    Wrapper for sampling from multiple generators. Use weights
+    parameter to control the sampling fraction for each of the
+    generator
+    """
     def __init__(
         self,
         generators : List[GeneratorBase],
@@ -360,10 +375,6 @@ class CompositeGenerator(GeneratorBase, HasWeights):
         weights : Iterable = None,
     ):
         """
-        Wrapper for sampling from multiple generators. Use weights
-        parameter to control the sampling fraction for each of the
-        generator 
-
         :param generators: List of generators
         :param label: Generator string label
         :param weights: Weights for each of the generator. Weights
@@ -396,7 +407,7 @@ class CompositeGenerator(GeneratorBase, HasWeights):
         can call this method to not perform generate() separately on
         each generator
 
-        :param num_samples: Total number of samples to generate 
+        :param num_samples: Total number of samples to generate
         """
 
         weights = self.getWeights()
@@ -427,7 +438,9 @@ class CompositeGenerator(GeneratorBase, HasWeights):
 
         for i in range(len(data_sizes)):
             if num_required_samples[i] > data_sizes[i]:
-                raise ValueError(f'Not enough samples in generator {self._generators[i].getLabel()}')
+                raise ValueError(
+                    f'Not enough samples in generator {self._generators[i].getLabel()}'
+                )
 
         generator_fracs = []
         for n, s in zip(num_required_samples, data_sizes):

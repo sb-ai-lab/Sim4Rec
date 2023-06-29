@@ -14,12 +14,14 @@ from sim4rec.response import (
 
 SEED = 1234
 
+
 @pytest.fixture(scope="function")
 def users_va_left() -> VectorAssembler:
     return VectorAssembler(
         inputCols=[f'user_attr_{i}' for i in range(0, 5)],
         outputCol='__v1'
     )
+
 
 @pytest.fixture(scope="function")
 def users_va_right() -> VectorAssembler:
@@ -28,6 +30,7 @@ def users_va_right() -> VectorAssembler:
         outputCol='__v2'
     )
 
+
 @pytest.fixture(scope="function")
 def bernoulli_resp() -> BernoulliResponse:
     return BernoulliResponse(
@@ -35,6 +38,7 @@ def bernoulli_resp() -> BernoulliResponse:
         outputCol='relevance',
         seed=SEED
     )
+
 
 @pytest.fixture(scope="function")
 def noise_resp() -> NoiseResponse:
@@ -45,12 +49,14 @@ def noise_resp() -> NoiseResponse:
         seed=SEED
     )
 
+
 @pytest.fixture(scope="function")
 def const_resp() -> ConstantResponse:
     return ConstantResponse(
         value=0.5,
         outputCol='__const',
     )
+
 
 @pytest.fixture(scope="function")
 def cosine_resp() -> CosineSimilatiry:
@@ -59,6 +65,7 @@ def cosine_resp() -> CosineSimilatiry:
         outputCol='__cosine'
     )
 
+
 @pytest.fixture(scope="function")
 def param_resp() -> ParametricResponseFunction:
     return ParametricResponseFunction(
@@ -66,6 +73,7 @@ def param_resp() -> ParametricResponseFunction:
         outputCol='__proba',
         weights=[0.5, 0.5]
     )
+
 
 @pytest.fixture(scope="module")
 def random_df(spark : SparkSession) -> DataFrame:
@@ -77,6 +85,7 @@ def random_df(spark : SparkSession) -> DataFrame:
         (4, 1.0)
     ]
     return spark.createDataFrame(data=data, schema=['id', '__proba'])
+
 
 @pytest.fixture(scope="module")
 def vector_df(spark : SparkSession) -> DataFrame:
@@ -101,6 +110,7 @@ def test_bernoulli_transform(
     assert set(result['relevance']) == set([0, 1])
     assert list(result['relevance'][:5]) == [0, 0, 0, 1, 1]
 
+
 def test_bernoulli_iterdiff(
     bernoulli_resp : BernoulliResponse,
     random_df : DataFrame
@@ -122,6 +132,7 @@ def test_noise_transform(
     assert '__noise' in result.columns
     assert len(result) == 5
     assert np.allclose(result['__noise'][0], 0.6117798825975235)
+
 
 def test_noise_iterdiff(
     noise_resp : NoiseResponse,

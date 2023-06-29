@@ -3,6 +3,9 @@ from typing import List, Union, Dict, Optional
 
 import numpy as np
 from scipy.stats import kstest
+# TL;DR scipy.special is a C library, pylint needs python source code
+# https://github.com/pylint-dev/pylint/issues/3703
+# pylint: disable=no-name-in-module
 from scipy.special import kl_div
 
 import pyspark.sql.functions as sf
@@ -28,10 +31,14 @@ def evaluate_synthetic(
     Evaluates the quality of synthetic data against real. The following
     metrics will be calculated:
 
-    - LogisticDetection: The metric evaluates how hard it is to distinguish the synthetic data from the real data by using a Logistic regression model
-    - SVCDetection: The metric evaluates how hard it is to distinguish the synthetic data from the real data by using a C-Support Vector Classification model
-    - KSTest: This metric uses the two-sample Kolmogorov-Smirnov test to compare the distributions of continuous columns using the empirical CDF
-    - ContinuousKLDivergence: This approximates the KL divergence by binning the continuous values to turn them into categorical values and then computing the relative entropy
+    - LogisticDetection: The metric evaluates how hard it is to distinguish the synthetic
+    data from the real data by using a Logistic regression model
+    - SVCDetection: The metric evaluates how hard it is to distinguish the synthetic data
+    from the real data by using a C-Support Vector Classification model
+    - KSTest: This metric uses the two-sample Kolmogorov-Smirnov test to compare
+    the distributions of continuous columns using the empirical CDF
+    - ContinuousKLDivergence: This approximates the KL divergence by binning the continuous values
+    to turn them into categorical values and then computing the relative entropy
 
     :param synth_df: Synthetic data without any identifiers
     :param real_df: Real data without any identifiers
@@ -52,8 +59,8 @@ def evaluate_synthetic(
 
     return {
         row['metric'] : row['normalized_score']
-            for _, row in result.iterrows()
-        }
+        for _, row in result.iterrows()
+    }
 
 
 def ks_test(
@@ -74,6 +81,7 @@ def ks_test(
     rvs, cdf = pdf[predCol].values, pdf[labelCol].values
 
     return kstest(rvs, cdf).statistic
+
 
 def kl_divergence(
     df : DataFrame,
@@ -105,7 +113,37 @@ def kl_divergence(
     return 1 / (1 + np.sum(kl_div(f_obs, f_exp)))
 
 
+# pylint: disable=too-few-public-methods
 class QualityControlObjective(ABC):
+    """
+    QualityControlObjective is designed to evaluate the quality of response
+    function by calculating the similarity degree between results of the
+    model, which was trained on real data and a model, trained with
+    simulator. The calculated function is
+
+    .. math::
+        1 - KS(predictionCol, labelCol) + DKL_{norm}(predictionCol, labelCol)
+
+        - \\frac{1}{N} \\sum_{n=1}^{N} |QM_{syn}^{i}(recs_{synthetic},
+        ground\_truth_{synthetic}) - QM_{real}^{i}(recs_{real}, ground\_truth_{real})|,
+
+    where
+
+    .. math::
+        KS = supx||Q(x) - P(x)||\ (i.e.\ KS\ test\ statistic)
+
+        DKL_{norm} = \\frac{1}{1 + DKL}
+
+    The greater value indicates more similarity between models' result
+    and lower value shows dissimilarity. As a predicted value for KS test
+    and KL divergence it takes the result of `response_function` on a
+    pairs from real log and compares the distributions similarity between
+    real responses and predicted. For calculating QM from formula above
+    the metrics from RePlay library are used. Those take ground truth and
+    predicted values for both models and measures how close are metric
+    values to each other.
+    """
+    # pylint: disable=too-many-arguments
     def __init__(
         self,
         userKeyCol : str,
@@ -117,33 +155,6 @@ class QualityControlObjective(ABC):
         replay_metrics : Optional[Dict[Metric, Union[int, List[int]]]],
     ):
         """
-        QualityControlObjective is designed to evaluate the quality of response
-        function by calculating the similarity degree between results of the
-        model, which was trained on real data and a model, trained with
-        simulator. The calculated function is
-
-        .. math::
-            1 - KS(predictionCol, labelCol) + DKL_{norm}(predictionCol, labelCol)
-
-            - \\frac{1}{N} \\sum_{n=1}^{N} |QM_{syn}^{i}(recs_{synthetic},
-            ground\_truth_{synthetic}) - QM_{real}^{i}(recs_{real}, ground\_truth_{real})|,
-
-        where
-
-        .. math::
-            KS = supx||Q(x) - P(x)||\ (i.e.\ KS\ test\ statistic)
-
-            DKL_{norm} = \\frac{1}{1 + DKL}
-
-        The greater value indicates more similarity between models' result
-        and lower value shows dissimilarity. As a predicted value for KS test
-        and KL divergence it takes the result of `response_function` on a
-        pairs from real log and compares the distributions similarity between
-        real responses and predicted. For calculating QM from formula above
-        the metrics from RePlay library are used. Those take ground truth and
-        predicted values for both models and measures how close are metric
-        values to each other.
-
         :param userKeyCol: User identifier column name
         :param itemKeyCol: Item identifier column name
         :param predictionCol: Prediction column name, which `response_function`
@@ -173,6 +184,7 @@ class QualityControlObjective(ABC):
         self._resp_func = response_function
         self._replay_metrics = replay_metrics
 
+    # pylint: disable=too-many-arguments
     def __call__(
         self,
         test_log : DataFrame,
@@ -208,8 +220,9 @@ class QualityControlObjective(ABC):
                              .join(item_features, on=self._itemKeyCol, how='left')
 
         pred_df = self._resp_func.transform(feature_df)
-        objective = 1 - ks_test(pred_df, self._predictionCol, self._labelCol) +\
-                    kl_divergence(pred_df, self._predictionCol, self._labelCol)
+        objective = (1
+                     - ks_test(pred_df, self._predictionCol, self._labelCol)
+                     + kl_divergence(pred_df, self._predictionCol, self._labelCol))
 
         metrics_values = []
         for r, t in zip((real_recs, synthetic_recs), (real_ground_truth, synthetic_ground_truth)):
@@ -231,7 +244,22 @@ class QualityControlObjective(ABC):
         return objective
 
 
+# pylint: disable=too-few-public-methods
 class EvaluateMetrics(ABC):
+    """
+    Recommendation systems and response function metric evaluator class.
+    The class allows you to evaluate the quality of a response function on
+    historical data or a recommender system on historical data or based on
+    the results of an experiment in a simulator. Provides simultaneous
+    calculation of several metrics using metrics from the Spark MLlib and
+    RePlay libraries.
+    A created instance is callable on a dataframe with ``user_id, item_id,
+    predicted relevance/response, true relevance/response`` format, which
+    you can usually retrieve from simulators sample_responses() or log data
+    with recommendation algorithm scores. In case when the RePlay metrics
+    are needed it additionally apply filter on a passed dataframe to take
+    only necessary responses (e.g. when response is equal to 1).
+    """
 
     REGRESSION_METRICS = set(['rmse', 'mse', 'r2', 'mae', 'var'])
     MULTICLASS_METRICS = set([
@@ -243,6 +271,7 @@ class EvaluateMetrics(ABC):
     ])
     BINARY_METRICS = set(['areaUnderROC', 'areaUnderPR'])
 
+    # pylint: disable=too-many-arguments
     def __init__(
         self,
         userKeyCol : str,
@@ -254,19 +283,6 @@ class EvaluateMetrics(ABC):
         mllib_metrics : Optional[Union[str, List[str]]] = None
     ):
         """
-        Recommendation systems and response function metric evaluator class.
-        The class allows you to evaluate the quality of a response function on
-        historical data or a recommender system on historical data or based on
-        the results of an experiment in a simulator. Provides simultaneous
-        calculation of several metrics using metrics from the Spark MLlib and
-        RePlay libraries.
-        A created instance is callable on a dataframe with ``user_id, item_id,
-        predicted relevance/response, true relevance/response`` format, which
-        you can usually retrieve from simulators sample_responses() or log data
-        with recommendation algorithm scores. In case when the RePlay metrics
-        are needed it additionally apply filter on a passed dataframe to take
-        only necessary responses (e.g. when response is equal to 1).
-
         :param userKeyCol: User identifier column name
         :param itemKeyCol: Item identifier column name
         :param predictionCol: Predicted scores column name
@@ -291,7 +307,7 @@ class EvaluateMetrics(ABC):
         self._itemKeyCol = itemKeyCol
         self._predictionCol = predictionCol
         self._labelCol = labelCol
-        self._filter = (sf.col(self._labelCol) >= replay_label_filter)
+        self._filter = sf.col(self._labelCol) >= replay_label_filter
 
         if isinstance(mllib_metrics, str):
             mllib_metrics = [mllib_metrics]
@@ -323,9 +339,9 @@ class EvaluateMetrics(ABC):
 
         if len(self._replay_metrics) > 0:
             exp = Experiment(
-                test=df.filter(self._filter)\
-                    .drop(self._predictionCol)\
-                    .withColumnRenamed(self._labelCol, 'relevance'),
+                test=df.filter(self._filter)
+                       .drop(self._predictionCol)
+                       .withColumnRenamed(self._labelCol, 'relevance'),
                 metrics=self._replay_metrics
             )
             exp.add_result(
