@@ -238,8 +238,10 @@ class Simulator(ABC):
         :param recs_df: Dataframe with recommendations. Must contain
             user's and item's identifier columns. Other columns will
             be ignored
-        :param user_features: Users dataframe with features and identifiers
-        :param item_features: Items dataframe with features and identifiers
+        :param user_features: Users dataframe with features and identifiers,
+                              can be set to None
+        :param item_features: Items dataframe with features and identifiers,
+                              can be set to None
         :param action_models: Spark pipeline to evaluate responses
         :returns: DataFrame with user-item pairs and the respective actions
         """
