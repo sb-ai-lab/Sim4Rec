@@ -1,6 +1,6 @@
 import pathlib
 from abc import ABC
-from typing import Tuple, Union
+from typing import Tuple, Union, Optional
 
 from pyspark.sql import SparkSession
 from pyspark.sql import DataFrame
@@ -228,9 +228,9 @@ class Simulator(ABC):
     def sample_responses(
         self,
         recs_df : DataFrame,
-        user_features : DataFrame,
-        item_features : DataFrame,
-        action_models : PipelineModel
+        action_models : PipelineModel,
+        user_features : Optional[DataFrame] = None,
+        item_features : Optional[DataFrame] = None
     ) -> DataFrame:
         """
         Simulates the actions users took on their recommended items
@@ -238,13 +238,18 @@ class Simulator(ABC):
         :param recs_df: Dataframe with recommendations. Must contain
             user's and item's identifier columns. Other columns will
             be ignored
-        :param user_features: Users dataframe with features and identifiers
-        :param item_features: Items dataframe with features and identifiers
+        :param user_features: Users dataframe with features and identifiers,
+                              can be None
+        :param item_features: Items dataframe with features and identifiers,
+                              can be None
         :param action_models: Spark pipeline to evaluate responses
         :returns: DataFrame with user-item pairs and the respective actions
         """
 
-        user_item_df = recs_df.join(user_features, self._user_key_col, 'left')\
-                              .join(item_features, self._item_key_col, 'left')
+        if user_features is not None:
+            recs_df = recs_df.join(user_features, self._user_key_col, 'left')
 
-        return action_models.transform(user_item_df)
+        if item_features is not None:
+            recs_df = recs_df.join(item_features, self._item_key_col, 'left')
+
+        return action_models.transform(recs_df)
