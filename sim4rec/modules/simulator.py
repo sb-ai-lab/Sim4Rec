@@ -229,8 +229,8 @@ class Simulator(ABC):
         self,
         recs_df : DataFrame,
         action_models : PipelineModel,
-        user_features : Optional[DataFrame]=None,
-        item_features : Optional[DataFrame]=None
+        user_features : Optional[DataFrame] = None,
+        item_features : Optional[DataFrame] = None
     ) -> DataFrame:
         """
         Simulates the actions users took on their recommended items
