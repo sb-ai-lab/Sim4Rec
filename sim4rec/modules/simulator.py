@@ -244,7 +244,10 @@ class Simulator(ABC):
         :returns: DataFrame with user-item pairs and the respective actions
         """
 
-        user_item_df = recs_df.join(user_features, self._user_key_col, 'left')\
-                              .join(item_features, self._item_key_col, 'left')
+        if user_features is not None:
+            recs_df = recs_df.join(user_features, self._user_key_col, 'left')
 
-        return action_models.transform(user_item_df)
+        if item_features is not None:
+            recs_df = recs_df.join(item_features, self._item_key_col, 'left')
+
+        return action_models.transform(recs_df)
