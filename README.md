@@ -152,3 +152,16 @@ For tests the pytest python library is used and to run tests for all modules you
 ```bash
 pytest
 ```
+
+## Licence
+Sim4Rec is distributed under the [Apache License Version 2.0](https://github.com/sb-ai-lab/Sim4Rec/blob/main/LICENSE), 
+nevertheless the SDV package, imported by the Sim4Rec for synthetic data generation,
+is distributed under [Business Source License (BSL) 1.1](https://github.com/sdv-dev/SDV/blob/master/LICENSE).
+
+Synthetic tabular data generation not a purpose of the Sit4Rec framework. 
+The Sim4Rec offers an API and wrappers to run simulation with synthetic data, but the method of synthetic data generation is determined by the user. 
+SDV package is imported for illustration purposes and may be replaced by another synthetic data generation solution.  
+
+Thus, synthetic data generation functional and quality evaluation with SDV library, 
+namely the `SDVDataGenerator` from [generator.py](sim4rec/modules/generator.py) and `evaluate_synthetic` from [evaluation.py](sim4rec/modules/evaluation.py) 
+should be used for non-production purposes only according to the SDV License. 
