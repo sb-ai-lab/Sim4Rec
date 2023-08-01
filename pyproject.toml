@@ -1,6 +1,6 @@
 [tool.poetry]
 name = "sim4rec"
-version = "0.0.1"
+version = "0.0.2"
 description = "Simulator for recommendation algorithms"
 authors = ["Alexey Vasilev",
            "Anna Volodkevich",
