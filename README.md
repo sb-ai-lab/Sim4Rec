@@ -131,6 +131,8 @@ print(train_ndcg)
 
 You can find useful examples in `notebooks` folder, which demonstrates how to use synthetic data generators, composite generators, evaluate scores of the generators, iteratively refit recommendation algorithm, use response functions and more.
 
+Experiments with different datasets and tutorial how to write custom response functions can be found in 'experiments' folder.
+
 ## Build from sources
 
 ```bash
