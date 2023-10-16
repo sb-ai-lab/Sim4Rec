@@ -19,8 +19,8 @@ from pyspark.ml import Transformer
 
 from sdv.evaluation import evaluate
 
-from replay.metrics import Metric
-from replay.experiment import Experiment
+# from replay.metrics import Metric
+# from replay.experiment import Experiment
 
 
 def evaluate_synthetic(
@@ -114,134 +114,134 @@ def kl_divergence(
 
 
 # pylint: disable=too-few-public-methods
-class QualityControlObjective(ABC):
-    """
-    QualityControlObjective is designed to evaluate the quality of response
-    function by calculating the similarity degree between results of the
-    model, which was trained on real data and a model, trained with
-    simulator. The calculated function is
+# class QualityControlObjective(ABC):
+#     """
+#     QualityControlObjective is designed to evaluate the quality of response
+#     function by calculating the similarity degree between results of the
+#     model, which was trained on real data and a model, trained with
+#     simulator. The calculated function is
 
-    .. math::
-        1 - KS(predictionCol, labelCol) + DKL_{norm}(predictionCol, labelCol)
+#     .. math::
+#         1 - KS(predictionCol, labelCol) + DKL_{norm}(predictionCol, labelCol)
 
-        - \\frac{1}{N} \\sum_{n=1}^{N} |QM_{syn}^{i}(recs_{synthetic},
-        ground\_truth_{synthetic}) - QM_{real}^{i}(recs_{real}, ground\_truth_{real})|,
+#         - \\frac{1}{N} \\sum_{n=1}^{N} |QM_{syn}^{i}(recs_{synthetic},
+#         ground\_truth_{synthetic}) - QM_{real}^{i}(recs_{real}, ground\_truth_{real})|,
 
-    where
+#     where
 
-    .. math::
-        KS = supx||Q(x) - P(x)||\ (i.e.\ KS\ test\ statistic)
+#     .. math::
+#         KS = supx||Q(x) - P(x)||\ (i.e.\ KS\ test\ statistic)
 
-        DKL_{norm} = \\frac{1}{1 + DKL}
+#         DKL_{norm} = \\frac{1}{1 + DKL}
 
-    The greater value indicates more similarity between models' result
-    and lower value shows dissimilarity. As a predicted value for KS test
-    and KL divergence it takes the result of `response_function` on a
-    pairs from real log and compares the distributions similarity between
-    real responses and predicted. For calculating QM from formula above
-    the metrics from RePlay library are used. Those take ground truth and
-    predicted values for both models and measures how close are metric
-    values to each other.
-    """
-    # pylint: disable=too-many-arguments
-    def __init__(
-        self,
-        userKeyCol : str,
-        itemKeyCol : str,
-        predictionCol : str,
-        labelCol : str,
-        relevanceCol : str,
-        response_function : Transformer,
-        replay_metrics : Optional[Dict[Metric, Union[int, List[int]]]],
-    ):
-        """
-        :param userKeyCol: User identifier column name
-        :param itemKeyCol: Item identifier column name
-        :param predictionCol: Prediction column name, which `response_function`
-            will create
-        :param labelCol: Column name with ground truth response values
-        :param relevanceCol: Relevance column name for RePlay metrics. For
-            ground truth dataframe it should be response score and for
-            dataframe with recommendations it should be the predicted relevance
-            from recommendation algorithm
-        :param response_function: Spark's transformer which predict response
-            value
-        :param replay_metrics: Dictionary with replay metrics. See
-            https://sb-ai-lab.github.io/RePlay/pages/modules/metrics.html for
-            infromation about available metrics and their descriptions. The
-            dictionary format is the same as in Experiment class of the RePlay
-            library. Those metrics will be used as QM in the objective above
-        """
+#     The greater value indicates more similarity between models' result
+#     and lower value shows dissimilarity. As a predicted value for KS test
+#     and KL divergence it takes the result of `response_function` on a
+#     pairs from real log and compares the distributions similarity between
+#     real responses and predicted. For calculating QM from formula above
+#     the metrics from RePlay library are used. Those take ground truth and
+#     predicted values for both models and measures how close are metric
+#     values to each other.
+#     """
+#     # pylint: disable=too-many-arguments
+#     def __init__(
+#         self,
+#         userKeyCol : str,
+#         itemKeyCol : str,
+#         predictionCol : str,
+#         labelCol : str,
+#         relevanceCol : str,
+#         response_function : Transformer,
+#         # replay_metrics : Optional[Dict[Metric, Union[int, List[int]]]],
+#     ):
+#         """
+#         :param userKeyCol: User identifier column name
+#         :param itemKeyCol: Item identifier column name
+#         :param predictionCol: Prediction column name, which `response_function`
+#             will create
+#         :param labelCol: Column name with ground truth response values
+#         :param relevanceCol: Relevance column name for RePlay metrics. For
+#             ground truth dataframe it should be response score and for
+#             dataframe with recommendations it should be the predicted relevance
+#             from recommendation algorithm
+#         :param response_function: Spark's transformer which predict response
+#             value
+#         :param replay_metrics: Dictionary with replay metrics. See
+#             https://sb-ai-lab.github.io/RePlay/pages/modules/metrics.html for
+#             infromation about available metrics and their descriptions. The
+#             dictionary format is the same as in Experiment class of the RePlay
+#             library. Those metrics will be used as QM in the objective above
+#         """
 
-        super().__init__()
+#         super().__init__()
 
-        self._userKeyCol = userKeyCol
-        self._itemKeyCol = itemKeyCol
-        self._predictionCol = predictionCol
-        self._relevanceCol = relevanceCol
-        self._labelCol = labelCol
+#         self._userKeyCol = userKeyCol
+#         self._itemKeyCol = itemKeyCol
+#         self._predictionCol = predictionCol
+#         self._relevanceCol = relevanceCol
+#         self._labelCol = labelCol
 
-        self._resp_func = response_function
-        self._replay_metrics = replay_metrics
+#         self._resp_func = response_function
+#         # self._replay_metrics = replay_metrics
 
-    # pylint: disable=too-many-arguments
-    def __call__(
-        self,
-        test_log : DataFrame,
-        user_features : DataFrame,
-        item_features : DataFrame,
-        real_recs : DataFrame,
-        real_ground_truth : DataFrame,
-        synthetic_recs : DataFrame,
-        synthetic_ground_truth : DataFrame
-    ) -> float:
-        """
-        Calculates the models similarity value. Note, that dataframe with
-        recommendations for both synthetic and real data must include only
-        users from ground truth dataframe
+#     # pylint: disable=too-many-arguments
+#     def __call__(
+#         self,
+#         test_log : DataFrame,
+#         user_features : DataFrame,
+#         item_features : DataFrame,
+#         real_recs : DataFrame,
+#         real_ground_truth : DataFrame,
+#         synthetic_recs : DataFrame,
+#         synthetic_ground_truth : DataFrame
+#     ) -> float:
+#         """
+#         Calculates the models similarity value. Note, that dataframe with
+#         recommendations for both synthetic and real data must include only
+#         users from ground truth dataframe
 
-        :param test_log: Real log dataframe with response values
-        :param user_features: Users features dataframe with identifier
-        :param item_features: Items features dataframe with identifier
-        :param real_recs: Recommendations dataframe from model trained on
-            real dataset
-        :param real_ground_truth: Real log dataframe with only positive
-            responses
-        :param synthetic_recs: Recommendations dataframe from model trained
-            with simulator
-        :param synthetic_ground_truth: Simulator's log dataframe with only
-            positive responses
-        :return: Function value
-        """
+#         :param test_log: Real log dataframe with response values
+#         :param user_features: Users features dataframe with identifier
+#         :param item_features: Items features dataframe with identifier
+#         :param real_recs: Recommendations dataframe from model trained on
+#             real dataset
+#         :param real_ground_truth: Real log dataframe with only positive
+#             responses
+#         :param synthetic_recs: Recommendations dataframe from model trained
+#             with simulator
+#         :param synthetic_ground_truth: Simulator's log dataframe with only
+#             positive responses
+#         :return: Function value
+#         """
 
-        objective = 0
+#         objective = 0
 
-        feature_df = test_log.join(user_features, on=self._userKeyCol, how='left')\
-                             .join(item_features, on=self._itemKeyCol, how='left')
+#         feature_df = test_log.join(user_features, on=self._userKeyCol, how='left')\
+#                              .join(item_features, on=self._itemKeyCol, how='left')
 
-        pred_df = self._resp_func.transform(feature_df)
-        objective = (1
-                     - ks_test(pred_df, self._predictionCol, self._labelCol)
-                     + kl_divergence(pred_df, self._predictionCol, self._labelCol))
+#         pred_df = self._resp_func.transform(feature_df)
+#         objective = (1
+#                      - ks_test(pred_df, self._predictionCol, self._labelCol)
+#                      + kl_divergence(pred_df, self._predictionCol, self._labelCol))
 
-        metrics_values = []
-        for r, t in zip((real_recs, synthetic_recs), (real_ground_truth, synthetic_ground_truth)):
-            r = r.select(self._userKeyCol, self._itemKeyCol, self._relevanceCol)\
-                 .withColumnRenamed(self._userKeyCol, 'user_idx')\
-                 .withColumnRenamed(self._itemKeyCol, 'item_idx')\
-                 .withColumnRenamed(self._relevanceCol, 'relevance')
-            t = t.select(self._userKeyCol, self._itemKeyCol, self._relevanceCol)\
-                 .withColumnRenamed(self._userKeyCol, 'user_idx')\
-                 .withColumnRenamed(self._itemKeyCol, 'item_idx')\
-                 .withColumnRenamed(self._relevanceCol, 'relevance')
+#         metrics_values = []
+#         for r, t in zip((real_recs, synthetic_recs), (real_ground_truth, synthetic_ground_truth)):
+#             r = r.select(self._userKeyCol, self._itemKeyCol, self._relevanceCol)\
+#                  .withColumnRenamed(self._userKeyCol, 'user_idx')\
+#                  .withColumnRenamed(self._itemKeyCol, 'item_idx')\
+#                  .withColumnRenamed(self._relevanceCol, 'relevance')
+#             t = t.select(self._userKeyCol, self._itemKeyCol, self._relevanceCol)\
+#                  .withColumnRenamed(self._userKeyCol, 'user_idx')\
+#                  .withColumnRenamed(self._itemKeyCol, 'item_idx')\
+#                  .withColumnRenamed(self._relevanceCol, 'relevance')
 
-            exp = Experiment(test=t, metrics=self._replay_metrics)
-            exp.add_result('_dummy', r)
-            metrics_values.append(exp.results.values)
+#             # exp = Experiment(test=t, metrics=self._replay_metrics)
+#             # exp.add_result('_dummy', r)
+#             # metrics_values.append(exp.results.values)
 
-        objective -= np.abs(metrics_values[0] - metrics_values[1]).mean()
+#         objective -= np.abs(metrics_values[0] - metrics_values[1]).mean()
 
-        return objective
+#         return objective
 
 
 # pylint: disable=too-few-public-methods
@@ -278,8 +278,8 @@ class EvaluateMetrics(ABC):
         itemKeyCol : str,
         predictionCol : str,
         labelCol : str,
-        replay_label_filter : float = 1.0,
-        replay_metrics : Optional[Dict[Metric, Union[int, List[int]]]] = None,
+        # replay_label_filter : float = 1.0,
+        # replay_metrics : Optional[Dict[Metric, Union[int, List[int]]]] = None,
         mllib_metrics : Optional[Union[str, List[str]]] = None
     ):
         """
@@ -307,17 +307,17 @@ class EvaluateMetrics(ABC):
         self._itemKeyCol = itemKeyCol
         self._predictionCol = predictionCol
         self._labelCol = labelCol
-        self._filter = sf.col(self._labelCol) >= replay_label_filter
+        # self._filter = sf.col(self._labelCol) >= replay_label_filter
 
         if isinstance(mllib_metrics, str):
             mllib_metrics = [mllib_metrics]
 
-        if replay_metrics is None:
-            replay_metrics = {}
+        # if replay_metrics is None:
+        #     replay_metrics = {}
         if mllib_metrics is None:
             mllib_metrics = []
 
-        self._replay_metrics = replay_metrics
+        # self._replay_metrics = replay_metrics
         self._mllib_metrics = mllib_metrics
 
     def __call__(
@@ -337,18 +337,18 @@ class EvaluateMetrics(ABC):
 
         result = {}
 
-        if len(self._replay_metrics) > 0:
-            exp = Experiment(
-                test=df.filter(self._filter)
-                       .drop(self._predictionCol)
-                       .withColumnRenamed(self._labelCol, 'relevance'),
-                metrics=self._replay_metrics
-            )
-            exp.add_result(
-                '__dummy',
-                df.drop(self._labelCol).withColumnRenamed(self._predictionCol, 'relevance')
-            )
-            result.update(exp.results.to_dict(orient='records')[0])
+        # if len(self._replay_metrics) > 0:
+        #     exp = Experiment(
+        #         test=df.filter(self._filter)
+        #                .drop(self._predictionCol)
+        #                .withColumnRenamed(self._labelCol, 'relevance'),
+        #         metrics=self._replay_metrics
+        #     )
+        #     exp.add_result(
+        #         '__dummy',
+        #         df.drop(self._labelCol).withColumnRenamed(self._predictionCol, 'relevance')
+        #     )
+        #     result.update(exp.results.to_dict(orient='records')[0])
 
         for m in self._mllib_metrics:
             evaluator = self._get_evaluator(m)

@@ -16,7 +16,6 @@ repository = "https://github.com/sb-ai-lab/Sim4Rec"
 [tool.poetry.dependencies]
 python = ">=3.8, <3.10"
 sdv = "0.15.0"
-replay-rec = ">=0.10.0"
 torch = "*"
 pandas = "*"
 pyspark = ">=3.0"

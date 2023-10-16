@@ -11,7 +11,8 @@ from pyspark.sql import DataFrame
 from pyspark.sql import functions as sf
 from sdv.tabular import CopulaGAN, CTGAN, GaussianCopula, TVAE
 
-from replay.session_handler import State
+# from replay.session_handler import State
+from sim4rec.utils.session_handler import State
 from sim4rec.params import (
     HasLabel, HasDevice, HasDataSize,
     HasParallelizationLevel, HasSeedSequence, HasWeights
