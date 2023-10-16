@@ -6,7 +6,6 @@ from pyspark.sql import SparkSession
 from pyspark.sql import DataFrame
 from pyspark.ml import Transformer, PipelineModel
 
-# from replay.session_handler import State
 from sim4rec.utils.session_handler import State
 from sim4rec.modules.generator import GeneratorBase
 

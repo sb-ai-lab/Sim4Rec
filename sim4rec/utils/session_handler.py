@@ -2,7 +2,6 @@
 Painless creation and retrieval of Spark sessions
 """
 
-import logging
 import os
 import sys
 from math import floor
@@ -10,7 +9,6 @@ from typing import Any, Dict, Optional
 
 import psutil
 import torch
-from pyspark import __version__ as pyspark_version
 from pyspark.sql import SparkSession
 
 
@@ -31,24 +29,6 @@ def get_spark_session(
     os.environ["PYSPARK_PYTHON"] = sys.executable
     os.environ["PYSPARK_DRIVER_PYTHON"] = sys.executable
 
-    # if os.environ.get("REPLAY_JAR_PATH"):
-    #     path_to_replay_jar = os.environ.get("REPLAY_JAR_PATH")
-    # else:
-    #     if pyspark_version.startswith("3.1"):
-    #         path_to_replay_jar = "https://repo1.maven.org/maven2/io/github/sb-ai-lab/replay_2.12/3.1.3/replay_2.12-3.1.3.jar"
-    #     elif pyspark_version.startswith("3.2") or pyspark_version.startswith(
-    #         "3.3"
-    #     ):
-    #         path_to_replay_jar = "https://repo1.maven.org/maven2/io/github/sb-ai-lab/replay_2.12/3.2.0_als_metrics/replay_2.12-3.2.0_als_metrics.jar"
-    #     elif pyspark_version.startswith("3.4"):
-    #         path_to_replay_jar = "https://repo1.maven.org/maven2/io/github/sb-ai-lab/replay_2.12/3.4.0_als_metrics/replay_2.12-3.4.0_als_metrics.jar"
-    #     else:
-    #         path_to_replay_jar = "https://repo1.maven.org/maven2/io/github/sb-ai-lab/replay_2.12/3.1.3/replay_2.12-3.1.3.jar"
-    #         logging.warning(
-    #             "Replay ALS model support only spark 3.1-3.4 versions! "
-    #             "Replay will use 'https://repo1.maven.org/maven2/io/github/sb-ai-lab/replay_2.12/3.1.3/replay_2.12-3.1.3.jar' in 'spark.jars' property."
-    #         )
-
     if spark_memory is None:
         spark_memory = floor(psutil.virtual_memory().total / 1024**3 * 0.7)
     if shuffle_partitions is None:
@@ -61,7 +41,6 @@ def get_spark_session(
             "spark.driver.extraJavaOptions",
             "-Dio.netty.tryReflectionSetAccessible=true",
         )
-        # .config("spark.jars", path_to_replay_jar)
         .config("spark.sql.shuffle.partitions", str(shuffle_partitions))
         .config("spark.local.dir", os.path.join(user_home, "tmp"))
         .config("spark.driver.maxResultSize", "4g")
@@ -75,22 +54,6 @@ def get_spark_session(
         .getOrCreate()
     )
     return spark
-
-
-def logger_with_settings() -> logging.Logger:
-    """Set up default logging"""
-    spark_logger = logging.getLogger("py4j")
-    spark_logger.setLevel(logging.WARN)
-    logger = logging.getLogger("replay")
-    formatter = logging.Formatter(
-        "%(asctime)s, %(name)s, %(levelname)s: %(message)s",
-        datefmt="%d-%b-%y %H:%M:%S",
-    )
-    hdlr = logging.StreamHandler()
-    hdlr.setFormatter(formatter)
-    logger.addHandler(hdlr)
-    logger.setLevel(logging.INFO)
-    return logger
 
 
 # pylint: disable=too-few-public-methods
@@ -119,9 +82,6 @@ class State(Borg):
         device: Optional[torch.device] = None,
     ):
         Borg.__init__(self)
-        if not hasattr(self, "logger_set"):
-            self.logger = logger_with_settings()
-            self.logger_set = True
 
         if session is None:
             if not hasattr(self, "session"):
