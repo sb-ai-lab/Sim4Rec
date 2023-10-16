@@ -1,0 +1,42 @@
+[tool.poetry]
+name = "sim4rec"
+version = "0.0.2"
+description = "Simulator for recommendation algorithms"
+authors = ["Alexey Vasilev",
+           "Anna Volodkevich",
+           "Andrey Gurov",
+           "Elizaveta Stavinova",
+           "Anton Lysenko"]
+packages = [
+    { include = "sim4rec" }
+]
+readme = "README.md"
+repository = "https://github.com/sb-ai-lab/Sim4Rec"
+
+[tool.poetry.dependencies]
+python = ">=3.8, <3.10"
+sdv = "0.15.0"
+replay-rec = ">=0.10.0"
+torch = "*"
+pandas = "*"
+pyspark = ">=3.0"
+numpy = ">=1.20.0"
+scipy = "*"
+
+[tool.poetry.dev-dependencies]
+# visualization
+jupyter = "*"
+jupyterlab = "*"
+matplotlib = "*"
+# testing
+pytest = "*"
+pytest-cov = "*"
+# docs
+Sphinx = "*"
+sphinx-rtd-theme = "*"
+sphinx-autodoc-typehints = "*"
+ghp-import = "*"
+
+[build-system]
+requires = ["poetry-core>=1.0.0"]
+build-backend = "poetry.core.masonry.api"

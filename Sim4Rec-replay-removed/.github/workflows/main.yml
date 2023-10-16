@@ -1,0 +1,49 @@
+name: CI
+
+# Controls when the workflow will run
+on:
+  # Triggers the workflow on pull request events but only for the main branch
+  pull_request:
+    branches: [main]
+
+  # Allows you to run this workflow manually from the Actions tab
+  workflow_dispatch:
+
+# A workflow run is made up of one or more jobs that can run sequentially or in parallel
+jobs:
+  run_tests:
+    runs-on: ubuntu-20.04
+    strategy:
+      matrix:
+        python-version: ["3.8", "3.9"]
+    steps:
+      - uses: actions/checkout@v2
+      - uses: actions/setup-python@v2
+        with:
+          python-version: ${{ matrix.python-version }}
+      - name: Install package
+        run: |
+          python -m venv venv
+          . ./venv/bin/activate
+          pip install --upgrade pip wheel poetry lightfm pycodestyle pylint pytest-cov
+
+          poetry cache clear pypi --all
+          poetry lock
+          poetry install
+      - name: Build docs
+        run: |
+          . ./venv/bin/activate
+          cd docs
+          make clean html
+      - name: pycodestyle
+        run: |
+          . ./venv/bin/activate
+          pycodestyle --ignore=E203,E231,E501,W503,W605,E122,E125 --max-doc-length=160 sim4rec tests
+      - name: pylint
+        run: |
+          . ./venv/bin/activate
+          pylint --rcfile=.pylintrc sim4rec
+      - name: pytest
+        run: |
+          . ./venv/bin/activate
+          pytest --cov=sim4rec --cov-report=term-missing --doctest-modules sim4rec --cov-fail-under=89 tests
