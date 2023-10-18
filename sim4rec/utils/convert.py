@@ -3,6 +3,7 @@ from pyspark.sql import SparkSession, DataFrame
 
 from sim4rec.utils.session_handler import State
 
+
 def pandas_to_spark(
     df: pd.DataFrame,
     schema=None,
