@@ -130,7 +130,7 @@ class EncoderEstimator(Estimator,
         self._num_loader_workers = num_loader_workers
         self._max_iter = max_iter
 
-    # pylint: disable=too-many-locals, not-callable
+    # pylint: disable=too-many-locals, not-callable, not-an-iterable
     def _fit(
         self,
         dataset : DataFrame
@@ -227,7 +227,7 @@ class EncoderTransformer(Transformer,
 
         self._encoder.to(torch.device(value))
 
-    # pylint: disable=not-callable
+    # pylint: disable=not-callable, not-an-iterable
     def _transform(
         self,
         dataset : DataFrame

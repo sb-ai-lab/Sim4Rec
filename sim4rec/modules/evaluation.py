@@ -8,14 +8,12 @@ from scipy.stats import kstest
 # pylint: disable=no-name-in-module
 from scipy.special import kl_div
 
-import pyspark.sql.functions as sf
 from pyspark.sql import DataFrame
 from pyspark.ml.evaluation import (
     BinaryClassificationEvaluator,
     RegressionEvaluator,
     MulticlassClassificationEvaluator
 )
-from pyspark.ml import Transformer
 
 from sdv.evaluation import evaluate
 
