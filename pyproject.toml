@@ -16,12 +16,10 @@ repository = "https://github.com/sb-ai-lab/Sim4Rec"
 [tool.poetry.dependencies]
 python = ">=3.8, <3.10"
 pyarrow = "*"
-pytest-cov = "*"
 sdv = "0.15.0"
 torch = "*"
 pandas = "*"
 pyspark = ">=3.0"
-pyarrow = "*"
 numpy = ">=1.20.0"
 scipy = "*"
 
