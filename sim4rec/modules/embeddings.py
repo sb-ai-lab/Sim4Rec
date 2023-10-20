@@ -130,7 +130,7 @@ class EncoderEstimator(Estimator,
         self._num_loader_workers = num_loader_workers
         self._max_iter = max_iter
 
-    # pylint: disable=too-many-locals, not-callable, not-an-iterable
+    # pylint: disable=too-many-locals, not-callable
     def _fit(
         self,
         dataset : DataFrame
@@ -140,7 +140,7 @@ class EncoderEstimator(Estimator,
         device_name = self.getDevice()
         seed = self.getSeed()
         device = torch.device(self.getDevice())
-
+        # pylint: disable=not-an-iterable
         X = dataset.select(*inputCols).toPandas().values
 
         torch.manual_seed(torch.seed() if seed is None else seed)
