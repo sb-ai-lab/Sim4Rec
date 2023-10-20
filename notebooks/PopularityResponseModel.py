@@ -5,6 +5,7 @@ import pyspark.sql.functions as sf
 
 from sim4rec.response import BernoulliResponse,  ActionModelTransformer
 
+
 class PopBasedTransformer(ActionModelTransformer):
     def __init__(
             self,
