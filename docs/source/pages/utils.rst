@@ -10,6 +10,14 @@ ______________________
 .. autofunction:: sim4rec.utils.pandas_to_spark
 
 
+Session
+______________________
+
+.. autofunction:: sim4rec.utils.session_handler.get_spark_session
+
+.. autoclass:: sim4rec.utils.session_handler.State
+    :members:
+
 Exceptions
 __________
 

@@ -1,7 +1,7 @@
 import pandas as pd
 from pyspark.sql import SparkSession, DataFrame
 
-from replay.session_handler import State
+from sim4rec.utils.session_handler import State
 
 
 def pandas_to_spark(

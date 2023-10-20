@@ -6,12 +6,9 @@ from sim4rec.modules import (
     evaluate_synthetic,
     EvaluateMetrics,
     ks_test,
-    kl_divergence,
-    QualityControlObjective
+    kl_divergence
 )
 from sim4rec.response import ConstantResponse
-
-from replay.metrics import NDCG, Precision
 
 
 @pytest.fixture(scope="function")
@@ -21,22 +18,7 @@ def evaluator() -> EvaluateMetrics:
         itemKeyCol='item_id',
         predictionCol='relevance',
         labelCol='response',
-        replay_label_filter=1.0,
-        replay_metrics={NDCG() : [2, 3], Precision() : 2},
         mllib_metrics=['mse', 'f1', 'areaUnderROC']
-    )
-
-
-@pytest.fixture(scope='module')
-def objective() -> QualityControlObjective:
-    return QualityControlObjective(
-        userKeyCol='user_id',
-        itemKeyCol='item_id',
-        predictionCol='relevance',
-        labelCol='response',
-        relevanceCol='relevance',
-        response_function=ConstantResponse(0.5, 'response'),
-        replay_metrics={NDCG() : 3, Precision() : 2},
     )
 
 
@@ -58,14 +40,9 @@ def test_evaluate_metrics(
     response_df : DataFrame
 ):
     result = evaluator(response_df)
-    assert 'NDCG@2' in result
-    assert 'NDCG@3' in result
-    assert 'Precision@2' in result
     assert 'mse' in result
     assert 'f1' in result
     assert 'areaUnderROC' in result
-
-    evaluator._replay_metrics = {}
 
     result = evaluator(response_df)
     assert 'mse' in result
@@ -73,12 +50,8 @@ def test_evaluate_metrics(
     assert 'areaUnderROC' in result
 
     evaluator._mllib_metrics = []
-    evaluator._replay_metrics = {NDCG() : [2, 3], Precision() : 2}
 
     result = evaluator(response_df)
-    assert 'NDCG@2' in result
-    assert 'NDCG@3' in result
-    assert 'Precision@2' in result
 
 
 def test_evaluate_synthetic(
@@ -117,25 +90,6 @@ def test_kldiv(
         df=users_df.select('user_attr_1', 'user_attr_2'),
         predCol='user_attr_1',
         labelCol='user_attr_2'
-    )
-
-    assert isinstance(result, float)
-
-
-def test_qualitycontrolobjective(
-    log_df : DataFrame,
-    users_df : DataFrame,
-    items_df : DataFrame,
-    objective : QualityControlObjective
-):
-    result = objective(
-        test_log=log_df,
-        user_features=users_df,
-        item_features=items_df,
-        real_recs=log_df,
-        real_ground_truth=log_df,
-        synthetic_recs=log_df,
-        synthetic_ground_truth=log_df
     )
 
     assert isinstance(result, float)

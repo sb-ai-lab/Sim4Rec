@@ -11,7 +11,7 @@ from pyspark.sql import DataFrame
 from pyspark.sql import functions as sf
 from sdv.tabular import CopulaGAN, CTGAN, GaussianCopula, TVAE
 
-from replay.session_handler import State
+from sim4rec.utils.session_handler import State
 from sim4rec.params import (
     HasLabel, HasDevice, HasDataSize,
     HasParallelizationLevel, HasSeedSequence, HasWeights
@@ -286,7 +286,7 @@ class SDVDataGenerator(GeneratorBase, HasParallelizationLevel, HasDevice):
                 set_sdv_seed(seed)
 
                 sampled_df = model.sample(len(pdf), output_file_path='disable')
-                yield pd.concat([pdf, sampled_df], axis=1)
+                yield pd.concat([pdf.drop(columns=seed_col), sampled_df], axis=1)
 
         set_sdv_seed()
 

@@ -109,10 +109,6 @@ __________
 
 .. autofunction:: sim4rec.modules.evaluate_synthetic
 
-.. autoclass:: sim4rec.modules.QualityControlObjective
-    :members:
-    :special-members: __call__
-
 .. autofunction:: sim4rec.modules.ks_test
 
 .. autofunction:: sim4rec.modules.kl_divergence
