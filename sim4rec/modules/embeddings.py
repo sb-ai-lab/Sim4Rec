@@ -227,7 +227,7 @@ class EncoderTransformer(Transformer,
 
         self._encoder.to(torch.device(value))
 
-    # pylint: disable=not-callable, not-an-iterable
+    # pylint: disable=not-callable
     def _transform(
         self,
         dataset : DataFrame
@@ -248,6 +248,7 @@ class EncoderTransformer(Transformer,
                 )
 
         schema = st.StructType(
+            # pylint: disable=not-an-iterable
             [st.StructField(c, st.FloatType()) for c in outputCols]
         )
 

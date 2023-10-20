@@ -221,7 +221,6 @@ class CosineSimilatiry(ActionModelTransformer,
         super().__init__(outputCol=outputCol)
         self._set(inputCols=inputCols)
 
-    # pylint: disable=unsubscriptable-object
     def _transform(
         self,
         dataset : DataFrame
@@ -243,11 +242,11 @@ class CosineSimilatiry(ActionModelTransformer,
 
         return dataset.withColumn(
             outputCol,
+            # pylint: disable=unsubscriptable-object
             cos_udf(sf.col(inputCols[0]), sf.col(inputCols[1]))
         )
 
 
-# pylint: disable=unsubscriptable-object
 class ParametricResponseFunction(ActionModelTransformer,
                                  HasInputCols,
                                  HasWeights):
@@ -280,6 +279,7 @@ class ParametricResponseFunction(ActionModelTransformer,
         return dataset.withColumn(
             outputCol,
             sum([
+                # pylint: disable=unsubscriptable-object
                 sf.col(c) * weights[i]
                 for i, c in enumerate(inputCols)
             ])
