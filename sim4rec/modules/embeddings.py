@@ -140,7 +140,7 @@ class EncoderEstimator(Estimator,
         device_name = self.getDevice()
         seed = self.getSeed()
         device = torch.device(self.getDevice())
-
+        # pylint: disable=not-an-iterable
         X = dataset.select(*inputCols).toPandas().values
 
         torch.manual_seed(torch.seed() if seed is None else seed)
@@ -248,6 +248,7 @@ class EncoderTransformer(Transformer,
                 )
 
         schema = st.StructType(
+            # pylint: disable=not-an-iterable
             [st.StructField(c, st.FloatType()) for c in outputCols]
         )
 

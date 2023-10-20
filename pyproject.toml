@@ -15,8 +15,8 @@ repository = "https://github.com/sb-ai-lab/Sim4Rec"
 
 [tool.poetry.dependencies]
 python = ">=3.8, <3.10"
+pyarrow = "*"
 sdv = "0.15.0"
-replay-rec = ">=0.10.0"
 torch = "*"
 pandas = "*"
 pyspark = ">=3.0"
@@ -29,8 +29,9 @@ jupyter = "*"
 jupyterlab = "*"
 matplotlib = "*"
 # testing
-pytest = "*"
 pytest-cov = "*"
+pycodestyle = "*" 
+pylint = "*"
 # docs
 Sphinx = "*"
 sphinx-rtd-theme = "*"

@@ -26,7 +26,7 @@ pip install sim4rec --use-deprecated=legacy-resolver
 To install dependencies with poetry run
 
 ```bash
-pip install --upgrade pip wheel poetry lightfm==1.17
+pip install --upgrade pip wheel poetry
 poetry install
 ```
 

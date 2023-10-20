@@ -19,8 +19,7 @@ from .evaluation import (
     evaluate_synthetic,
     EvaluateMetrics,
     ks_test,
-    kl_divergence,
-    QualityControlObjective
+    kl_divergence
 )
 
 __all__ = [
@@ -38,6 +37,5 @@ __all__ = [
     'evaluate_synthetic',
     'EvaluateMetrics',
     'ks_test',
-    'kl_divergence',
-    'QualityControlObjective'
+    'kl_divergence'
 ]
