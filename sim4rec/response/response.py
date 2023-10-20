@@ -242,6 +242,7 @@ class CosineSimilatiry(ActionModelTransformer,
 
         return dataset.withColumn(
             outputCol,
+            # pylint: disable=unsubscriptable-object
             cos_udf(sf.col(inputCols[0]), sf.col(inputCols[1]))
         )
 
@@ -278,6 +279,7 @@ class ParametricResponseFunction(ActionModelTransformer,
         return dataset.withColumn(
             outputCol,
             sum([
+                # pylint: disable=unsubscriptable-object
                 sf.col(c) * weights[i]
                 for i, c in enumerate(inputCols)
             ])
