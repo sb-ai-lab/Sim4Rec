@@ -43,6 +43,7 @@ class ThompsonSampling:
         seed: int = 1234,
     ):
         self.seed = seed
+        self.item_popularity = None
     
     
     def fit(self, log: DataFrame) -> None:
@@ -54,26 +55,8 @@ class ThompsonSampling:
         :return:
         """
         
-        num_positive = log.filter(
-            log.relevance == sf.lit(1)
-        ).groupby("item_idx").agg(
-            sf.count("relevance").alias("positive")
-        )
-        num_negative = log.filter(
-            log.relevance == sf.lit(0)
-        ).groupby("item_idx").agg(
-            sf.count("relevance").alias("negative")
-        )
-
-        self.item_popularity = num_positive.join(
-            num_negative, how="inner", on="item_idx"
-        )
-
-        self.item_popularity = self.item_popularity.withColumn(
-            "relevance",
-            sf.udf(np.random.beta, "double")("positive", "negative")
-        ).drop("positive", "negative")
-        self.item_popularity.cache().count()
+        self.item_popularity = self._create_item_popularity(log).cache()
+        self.item_popularity.count()
         self.fill = np.random.beta(1, 1)
 
     
@@ -95,6 +78,17 @@ class ThompsonSampling:
             if ``None``, take all items from ``log``.
             If it contains new items, ``relevance`` for them will be ``0``.
         """
+
+        if self.item_popularity == None: # if we did not fit the data, then return score from beta(1, 1)            
+            recs = (
+                users.withColumn("user_idx", items)
+                    .withColumn("item_idx", sf.udf(lambda: np.random.beta(1, 1), "double"))
+                    .select("user_idx", "item_idx", "relevance")
+            )
+            
+            return recs
+
+            
         users = users.select("user_idx").distinct()
         items = items.select("item_idx").distinct()
 
@@ -157,3 +151,34 @@ class ThompsonSampling:
         )
 
         return recs  
+
+
+    def partial_fit(self, log: DataFrame) -> None:
+        item_popularity = self._create_item_popularity(log).cache()
+        self.item_popularity = item_popularity.union(item_popularity)
+        self.item_popularity.count()
+        self.fill = np.random.beta(1, 1)
+
+
+    def _create_item_popularity(self, log: DataFrame) -> DataFrame:
+        num_positive = log.filter(
+            log.relevance == sf.lit(1)
+        ).groupby("item_idx").agg(
+            sf.count("relevance").alias("positive")
+        )
+        num_negative = log.filter(
+            log.relevance == sf.lit(0)
+        ).groupby("item_idx").agg(
+            sf.count("relevance").alias("negative")
+        )
+
+        item_popularity = num_positive.join(
+            num_negative, how="inner", on="item_idx"
+        )
+
+        item_popularity = item_popularity.withColumn(
+            "relevance",
+            sf.udf(np.random.beta, "double")("positive", "negative")
+        ).drop("positive", "negative")
+
+        return item_popularity
