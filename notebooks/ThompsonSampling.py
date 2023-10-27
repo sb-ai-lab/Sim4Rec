@@ -78,32 +78,30 @@ class ThompsonSampling:
             if ``None``, take all items from ``log``.
             If it contains new items, ``relevance`` for them will be ``0``.
         """
-
-        if self.item_popularity == None: # if we did not fit the data, then return score from beta(1, 1)            
-            recs = (
-                users.withColumn("user_idx", items)
-                    .withColumn("item_idx", sf.udf(lambda: np.random.beta(1, 1), "double"))
-                    .select("user_idx", "item_idx", "relevance")
-            )
-            
-            return recs
-
-            
         users = users.select("user_idx").distinct()
         items = items.select("item_idx").distinct()
-
-        selected_item_popularity = self.item_popularity.join(
-            items,
-            on="item_idx",
-            how="right"
-        ).fillna(value=self.fill, subset=["relevance"])
         
-        selected_item_popularity = selected_item_popularity.withColumn(
-            "relevance",
-            sf.when(sf.col("relevance") == sf.lit(0.0), 0.1**6).otherwise(
-                sf.col("relevance")
-            ),
-        )
+        if self.item_popularity is None:           
+            self.item_popularity = self._create_item_popularity(log)
+        else:
+            col = items.withColumn(
+                "relevance",
+                0. + sf.rand()
+            ).alias("it")
+            selected_item_popularity = self.item_popularity.alias("ip").join(
+                items.alias("items"),
+                on="item_idx",
+                how="right"
+            ).select(
+                sf.coalesce(sf.col("ip.relevance"), col["relevance"]).alias("relevance")
+            )
+            
+            selected_item_popularity = selected_item_popularity.withColumn(
+                "relevance",
+                sf.when(sf.col("relevance") == sf.lit(0.0), 0.1**6).otherwise(
+                    sf.col("relevance")
+                ),
+            )
 
         items_pd = selected_item_popularity.withColumn(
             "probability",
@@ -141,21 +139,13 @@ class ThompsonSampling:
 
         recs = users.withColumn("cnt", sf.lit(min(k, items_pd.shape[0])))
         recs = recs.groupby("user_idx").applyInPandas(grouped_map, REC_SCHEMA)
-        recs = get_top_k(
-            dataframe=recs,
-            partition_by_col=sf.col("user_idx"),
-            order_by_col=[sf.col("relevance").desc()],
-            k=k
-        ).select(
-            "user_idx", "item_idx", "relevance"
-        )
 
         return recs  
 
 
     def partial_fit(self, log: DataFrame) -> None:
         item_popularity = self._create_item_popularity(log).cache()
-        self.item_popularity = item_popularity.union(item_popularity)
+        self.item_popularity = self.item_popularity.union(item_popularity)
         self.item_popularity.count()
         self.fill = np.random.beta(1, 1)
 
