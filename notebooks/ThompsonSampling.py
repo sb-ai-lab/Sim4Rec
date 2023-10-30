@@ -3,9 +3,6 @@ import numpy as np
 from pyspark.sql import DataFrame
 from pyspark.sql import functions as sf
 import pandas as pd
-
-from utils import get_top_k
-
 from numpy.random import default_rng
 from pyspark.sql.types import (
     DoubleType,
@@ -82,25 +79,22 @@ class ThompsonSampling:
         items = items.select("item_idx").distinct()
         
         if self.item_popularity is None:           
-            self.item_popularity = self._create_item_popularity(log)
+            selected_item_popularity = items.withColumn("relevance", sf.rand())
         else:
-            col = items.withColumn(
-                "relevance",
-                0. + sf.rand()
-            ).alias("it")
             selected_item_popularity = self.item_popularity.alias("ip").join(
                 items.alias("items"),
                 on="item_idx",
                 how="right"
-            ).select(
-                sf.coalesce(sf.col("ip.relevance"), col["relevance"]).alias("relevance")
-            )
-            
-            selected_item_popularity = selected_item_popularity.withColumn(
+            ) \
+            .withColumn("new_item_relevance", sf.rand()) \
+            .withColumn("relevance", sf.coalesce(sf.col("relevance"), \
+                                                 sf.col("new_item_relevance"))) \
+            .drop("new_item_relevance") \
+            .withColumn(
                 "relevance",
                 sf.when(sf.col("relevance") == sf.lit(0.0), 0.1**6).otherwise(
                     sf.col("relevance")
-                ),
+                )
             )
 
         items_pd = selected_item_popularity.withColumn(
@@ -144,9 +138,27 @@ class ThompsonSampling:
 
 
     def partial_fit(self, log: DataFrame) -> None:
-        item_popularity = self._create_item_popularity(log).cache()
-        self.item_popularity = self.item_popularity.union(item_popularity)
+        if self.item_popularity is None:
+            self.fit(log)
+            return
+            
+        old_item_popularity = self.item_popularity
+        item_popularity = self._create_item_popularity(log)
+        self.item_popularity = self.item_popularity \
+                                        .union(item_popularity) \
+                                        .groupby("item_idx") \
+                                        .agg(
+                                            sf.sum("positive").alias("positive"), 
+                                            sf.sum("negative").alias("negative")
+                                            ) \
+                                        .withColumn(
+                                            "relevance",
+                                            sf.udf(np.random.beta, "double")("positive", "negative")
+                                        ).cache()
         self.item_popularity.count()
+        
+        if old_item_popularity is not None:
+            old_item_popularity.unpersist()
         self.fill = np.random.beta(1, 1)
 
 
@@ -169,6 +181,7 @@ class ThompsonSampling:
         item_popularity = item_popularity.withColumn(
             "relevance",
             sf.udf(np.random.beta, "double")("positive", "negative")
-        ).drop("positive", "negative")
+        )
 
         return item_popularity
+
