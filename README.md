@@ -37,19 +37,25 @@ The following example shows how to use simulator to train model iteratively by r
 ```python
 import numpy as np
 import pandas as pd
-
 import pyspark.sql.types as st
+import pyspark.sql.functions as sf
 from pyspark.ml import PipelineModel
 from sim4rec.utils import pandas_to_spark
 from sim4rec.modules import RealDataGenerator, Simulator
 from sim4rec.response import NoiseResponse, BernoulliResponse
 
-from ucb import UCB
-from replay.metrics import NDCG
+from ThompsonSampling import ThompsonSampling
+
+
+def calc_clicks_num(response_df):
+    return (response_df
+            .groupBy("user_idx").agg(sf.sum("response").alias("num_positive"))
+            .select(sf.mean("num_positive")).collect()[0][0]
+           )
 
 LOG_SCHEMA = st.StructType([
-    st.StructField('user_idx', st.LongType(), True),
-    st.StructField('item_idx', st.LongType(), True),
+    st.StructField('user_idx', st.IntegerType(), True),
+    st.StructField('item_idx', st.IntegerType(), True),
     st.StructField('relevance', st.DoubleType(), False),
     st.StructField('response', st.IntegerType(), False)
 ])
@@ -95,16 +101,15 @@ noise_resp = NoiseResponse(mu=0.5, sigma=0.2, outputCol='__noise')
 br = BernoulliResponse(inputCol='__noise', outputCol='response')
 pipeline = PipelineModel(stages=[noise_resp, br])
 
-model = UCB()
+model = ThompsonSampling()
 model.fit(log=history_df)
 
-ndcg = NDCG()
 
-train_ndcg = []
-for i in range(10):
+train_clicks = []
+for i in range(20):
     users = sim.sample_users(0.1).cache()
 
-    recs = model.predict(log=sim.log, k=5, users=users, items=items_df, filter_seen_items=True).cache()
+    recs = model.predict(k=10, users=users, items=items_df).cache()
 
     true_resp = sim.sample_responses(
         recs_df=recs,
@@ -115,7 +120,7 @@ for i in range(10):
 
     sim.update_log(true_resp, iteration=i)
 
-    train_ndcg.append(ndcg(recs, true_resp.filter(true_resp['response'] >= 1), 5))
+    train_clicks.append(calc_clicks_num(true_resp.filter(true_resp['response'] >= 1)))
 
     model.fit(sim.log.drop('relevance').withColumnRenamed('response', 'relevance'))
 
@@ -123,8 +128,7 @@ for i in range(10):
     recs.unpersist()
     true_resp.unpersist()
 
-print(train_ndcg)
-
+print(train_clicks)
 ```
 
 ## Examples
