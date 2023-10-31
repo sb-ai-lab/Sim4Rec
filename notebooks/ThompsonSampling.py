@@ -143,9 +143,8 @@ class ThompsonSampling:
             return
             
         old_item_popularity = self.item_popularity
-        item_popularity = self._create_item_popularity(log)
         self.item_popularity = self.item_popularity \
-                                        .union(item_popularity) \
+                                        .union(self._create_item_popularity(log)) \
                                         .groupby("item_idx") \
                                         .agg(
                                             sf.sum("positive").alias("positive"), 
@@ -175,8 +174,8 @@ class ThompsonSampling:
         )
 
         item_popularity = num_positive.join(
-            num_negative, how="inner", on="item_idx"
-        )
+            num_negative, how="outer", on="item_idx"
+        ).na.fill(value=1)
 
         item_popularity = item_popularity.withColumn(
             "relevance",
