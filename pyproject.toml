@@ -2,16 +2,12 @@
 name = "sim4rec"
 version = "0.0.2"
 description = "Simulator for recommendation algorithms"
-authors = ["Alexey Vasilev",
-           "Anna Volodkevich",
-           "Andrey Gurov",
-           "Elizaveta Stavinova",
-           "Anton Lysenko"]
+authors = []
 packages = [
     { include = "sim4rec" }
 ]
 readme = "README.md"
-repository = "https://github.com/sb-ai-lab/Sim4Rec"
+repository = ""
 
 [tool.poetry.dependencies]
 python = ">=3.8, <3.10"
