@@ -1,0 +1,3 @@
+packaging==24.0
+replay-rec==0.11.0
+rs_datasets
