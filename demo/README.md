@@ -1,9 +1,10 @@
 # Case studies for demo
 These are the cases for the demo track RECSYS 2024 conference:
-1. Synthetic data generation
+1. [Synthetic data generation](https://github.com/monkey0head/Sim4Rec/blob/demo/demo/synthetic_data_generation.ipynb)
 
 Generation of synthetic users based on real data.
-2. Long-term RS performance evaluation
+
+2. [Long-term RS performance evaluation](https://github.com/monkey0head/Sim4Rec/blob/demo/demo/rs_performance_evaluation.ipynb)
 
 Simple simulation pipeline for a long-term performance evaluation of recommender system. 
 
