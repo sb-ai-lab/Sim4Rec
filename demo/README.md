@@ -1,8 +1,10 @@
 # Case studies for demo
 These are the cases for the demo track RECSYS 2024 conference:
 1. Synthetic data generation
+
 Generation of synthetic users based on real data.
 2. Long-term RS performance evaluation
+
 Simple simulation pipeline for a long-term performance evaluation of recommender system. 
 
 # Table of contents
