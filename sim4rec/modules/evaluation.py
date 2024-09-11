@@ -115,14 +115,11 @@ class EvaluateMetrics(ABC):
     The class allows you to evaluate the quality of a response function on
     historical data or a recommender system on historical data or based on
     the results of an experiment in a simulator. Provides simultaneous
-    calculation of several metrics using metrics from the Spark MLlib and
-    RePlay libraries.
+    calculation of several metrics using metrics from the Spark MLlib library.
     A created instance is callable on a dataframe with ``user_id, item_id,
     predicted relevance/response, true relevance/response`` format, which
     you can usually retrieve from simulators sample_responses() or log data
-    with recommendation algorithm scores. In case when the RePlay metrics
-    are needed it additionally apply filter on a passed dataframe to take
-    only necessary responses (e.g. when response is equal to 1).
+    with recommendation algorithm scores.
     """
 
     REGRESSION_METRICS = set(['rmse', 'mse', 'r2', 'mae', 'var'])
@@ -149,15 +146,6 @@ class EvaluateMetrics(ABC):
         :param itemKeyCol: Item identifier column name
         :param predictionCol: Predicted scores column name
         :param labelCol: True label column name
-        :param replay_label_filter: RePlay metrics assume that only positive
-            responses are presented in ground truth data. All user-item pairs with
-            col(labelCol) >= replay_label_filter condition are treated as positive
-            responses during RePlay metrics calculation, defaults to 1.0
-        :param replay_metrics: Dictionary with replay metrics. See
-            https://sb-ai-lab.github.io/RePlay/pages/modules/metrics.html for
-            infromation about available metrics and their descriptions. The
-            dictionary format is the same as in Experiment class of the RePlay
-            library, defaults to None
         :param mllib_metrics: Metrics to calculate from spark's mllib. See
             REGRESSION_METRICS, MULTICLASS_METRICS, BINARY_METRICS for available
             values, defaults to None
