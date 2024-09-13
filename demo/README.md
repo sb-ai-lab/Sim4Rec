@@ -51,3 +51,4 @@ pip install rs_datasets
  - Get recommendations for all users from the recommender system
  - Get responses to recommended items from the response function
  - Measure the quality of the recommender system trained in the simulation cycle
+ 
