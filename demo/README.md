@@ -23,12 +23,6 @@ pip install --upgrade pip wheel poetry
 poetry install
 ```
 
-Please install additional dependencies to import the UCB recommender system for the rs_performance_evaluation.ipynb
-```bash
-pip install packaging==24.0
-pip install replay-rec==0.11.0
-```
-
 Please install `rs_datasets` to import MovieLens dataset for the synthetic_data_generation.ipynb
 ```bash
 pip install rs_datasets
