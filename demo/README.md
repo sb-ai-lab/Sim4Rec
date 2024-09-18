@@ -1,5 +1,5 @@
 # Case studies for demo
-Cases for the demo track RecSys'24 conference:
+Cases for the demo track ECIR'25 conference:
 1. [Synthetic data generation](https://github.com/monkey0head/Sim4Rec/blob/demo/demo/synthetic_data_generation.ipynb)
 
 Generation of synthetic users based on real data.
@@ -21,12 +21,6 @@ Install dependencies with poetry run
 ```bash
 pip install --upgrade pip wheel poetry
 poetry install
-```
-
-Please install additional dependencies to import the UCB recommender system for the rs_performance_evaluation.ipynb
-```bash
-pip install packaging==24.0
-pip install replay-rec==0.11.0
 ```
 
 Please install `rs_datasets` to import MovieLens dataset for the synthetic_data_generation.ipynb
