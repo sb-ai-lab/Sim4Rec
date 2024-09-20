@@ -1,5 +1,5 @@
 # Case studies for demo
-Cases for the demo track ECIR'25 conference:
+Cases for the demo track ICDM'24 conference:
 1. [Synthetic data generation](https://github.com/monkey0head/Sim4Rec/blob/demo/demo/synthetic_data_generation.ipynb)
 
 Generation of synthetic users based on real data.
