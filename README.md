@@ -143,7 +143,7 @@ Experiments with different datasets and a tutorial on writing custom response fu
 
 ## Case studies
 
-Case studies prepared for ICDM’24 demonstration are available in the 'demo directory'.
+Case studies prepared for the demo track are available in the 'demo' directory.
 
 1. Synthetic data generation
 2. Long-term RS performance evaluation

@@ -1,10 +1,10 @@
 # Case studies for demo
 Cases for the demo:
-1. [Synthetic data generation](https://github.com/monkey0head/Sim4Rec/blob/demo/demo/synthetic_data_generation.ipynb)
+1. [Synthetic data generation](https://github.com/sb-ai-lab/Sim4Rec/blob/main/demo/synthetic_data_generation.ipynb)
 
 Generation of synthetic users based on real data.
 
-2. [Long-term RS performance evaluation](https://github.com/monkey0head/Sim4Rec/blob/demo/demo/rs_performance_evaluation.ipynb)
+2. [Long-term RS performance evaluation](https://github.com/sb-ai-lab/Sim4Rec/blob/main/demo/rs_performance_evaluation.ipynb)
 
 Simple simulation pipeline for long-term performance evaluation of recommender system. 
 
