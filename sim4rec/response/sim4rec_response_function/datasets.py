@@ -102,24 +102,31 @@ class DatasetBase(Dataset, ABC):
 
     def __getitems__(self, user_idxs: list) -> dict:
         """Get data points for users with ids in `user_idx`"""
-        users_log = self._get_log_for_users(user_idxs)
+        users_log = self._get_log_for_users(
+            user_idxs
+        )  # list of rows, each row is ineraction
         batch = []
         curr_user_log = []
         prev_user = -1
-        # will it be faster if implemented with pandas udfs?
+
+        # TODO: will it be faster if implemented via convertion to pandas?
         for row in users_log:
-            if prev_user == row["user_idx"] and prev_user != -1:
+            if prev_user == row["user_idx"]:
                 curr_user_log.append(row)
             else:
-                user_index = self._user_indexer.index_np(prev_user)
-                batch.append(self._user_log_to_datapoint(curr_user_log, user_index))
+                if prev_user != -1:
+                    user_index = self._user_indexer.index_np(prev_user).item()
+                    batch.append(self._user_log_to_datapoint(curr_user_log, user_index))
                 prev_user = row["user_idx"]
                 curr_user_log = [row]
+        user_index = self._user_indexer.index_np(prev_user).item()
+        batch.append(self._user_log_to_datapoint(curr_user_log, user_index))
+
         return batch
 
     def get_empty_data(self, slate_size=10):
         """Empty datapont"""
-        # everythoing is masked, hence it won't impact training nor metric computation
+        # everything is masked, hence it won't impact training nor metric computation
         return {
             "item_indexes": np.ones((1, slate_size), dtype=int),
             "user_index": 1,  # unknown index
@@ -156,7 +163,6 @@ class DatasetBase(Dataset, ABC):
         """
         # Number of recommendations (R)
         R = len(slates)
-
         if R == 0:
             return self.get_empty_data()
 
@@ -175,7 +181,7 @@ class DatasetBase(Dataset, ABC):
             item_idxs[i, :slate_size] = slate["item_idxs"]
             slates_mask[i, :slate_size] = [True] * slate_size
             responses[i, :slate_size] = slate["responses"]
-            timestamps[i, :slate_size] = slate["__iter"] * slate_size
+            timestamps[i, :slate_size] = [slate["__iter"]] * slate_size
 
         # Create the output dictionary
         data_point = {
@@ -236,7 +242,7 @@ class RecommendationData(DatasetBase):
                 ]
             )
 
-        # in _users only users which are actually present in data are stored, rather han all indexed users
+        # in _users only users which are actually present in data are stored, NOT all indexed users
         self._users = [
             row["user_idx"] for row in self._log.select("user_idx").distinct().collect()
         ]
@@ -275,18 +281,18 @@ class PandasRecommendationData(DatasetBase):
         """
         Initializes the dataset from `log` pandas dataframe.
         """
-        super().__init__(log, item_indexer, user_indexer)
+        super(PandasRecommendationData, self).__init__(
+            log=log, item_indexer=item_indexer, user_indexer=user_indexer
+        )
         if not item_indexer:
             self._item_indexer.update_from_iter(self._log.item_idx.unique())
-        if not item_indexer:
+        if not user_indexer:
             self._user_indexer.update_from_iter(self._log.user_idx.unique())
         self._users = self._log.user_idx.unique()
 
     def _get_log_for_users(self, user_idxs: list):
         """
-        Faster version of `__getitem__` for batched input. DataLoaders in torch >=2
-        automatically use this method if it's implemented. In earlier versions of pytorch
-        a custom sampler is required.
+        Extract rows belonging to specific set of users.
 
         :param user_idxs: list of user indexes. If None, all users are returned.
         """
@@ -299,7 +305,7 @@ class PandasRecommendationData(DatasetBase):
                 item_idx=pd.NamedAgg(column="item_idx", aggfunc=list),
                 response=pd.NamedAgg(column="response", aggfunc=list),
             )
-            .rename(columns={"user_idx": "user_idxs"})
+            .rename(columns={"item_idx": "item_idxs", "response": "responses"})
             .reset_index()
         )
         # convert to list of rows to match spark .collect() format:
@@ -307,8 +313,17 @@ class PandasRecommendationData(DatasetBase):
         return users_log
 
     def apply_scoring(self, score_df):
-        self.log["item_index"] = self.item_indexer.index_np(self.log("item_idx"))
-        self.log["user_index"] = self.item_indexer.index_np(self.log("user_idx"))
-        self.log = self.log.merge(score_df, on=["user_index", "item_index"], how="left")
-        self.log["response_proba"] = self.log["score"]
-        self.log.drop(columns=["score"], inplace=True)
+        """Add predicted probabilities to log"""
+        score_df = (
+            score_df.groupby(["user_index", "item_index", "__iter"])
+            .agg({"score": "first"})
+            .reset_index()
+        )
+        self._log["item_index"] = self._item_indexer.index_np(self._log["item_idx"])
+        self._log["user_index"] = self._user_indexer.index_np(self._log["user_idx"])
+        self._log = self._log.merge(
+            score_df, on=["user_index", "item_index", "__iter"], how="left"
+        )
+        self._log["response_proba"] = self._log["score"]
+        self._log.drop(columns=["score", "item_index", "user_index"], inplace=True)
+        return self

@@ -44,8 +44,8 @@ def collate_rec_data(batch: list, padding_value=0):
             b["responses"] = pad_slates(b["responses"], max_slate_size, padding_value)
             b["timestamps"] = pad_slates(b["timestamps"], max_slate_size, padding_value)
 
-
     # user indexes
+    # print([b["user_index"] for b in batch])
     user_indexes = torch.tensor([b["user_index"] for b in batch], dtype=torch.long)
 
     # item indexes
@@ -71,7 +71,7 @@ def collate_rec_data(batch: list, padding_value=0):
         responses, padding_value=padding_value, batch_first=True
     )
 
-    # timestamps: we assume that (user_id, timestamp) is an unique 
+    # timestamps: we assume that (user_id, timestamp) is an unique
     # identifier of slate, hence we need to pass it through model
     # for further decoding model outputs
     # shape: batch_size, max_sequence_len, max_slate_size
@@ -102,7 +102,7 @@ def concat_batch(left, right):
     sessionwise_fields = [
         "item_indexes",
         # TODO: "item_embeddings",
-        # "item_categorical",
+        # TODO: "item_categorical",
         "slates_mask",
         "responses",
         # TODO: "user_embeddings",
@@ -228,12 +228,12 @@ class Indexer:
         vfunc = np.vectorize(lambda x: self._id2index.get(x, unk_index))
         return vfunc(arr)
 
-    def index_df(self, df, inputCol, outputCol):
-        """
-        Apply indexing to the whole spark dataframe colmn.
-        """
-        mapping_expr = create_map([lit(x) for x in chain(*self._id2index.items())])
-        return df.withColumn(outputCol, coalesce(mapping_expr[col(inputCol)], lit(1)))
+    # def index_df(self, df, inputCol, outputCol):
+    #     """
+    #     Apply indexing to the whole spark dataframe colmn.
+    #     """
+    #     mapping_expr = create_map([lit(x) for x in chain(*self._id2index.items())])
+    #     return df.withColumn(outputCol, coalesce(mapping_expr[col(inputCol)], lit(1)))
 
     def get_id(self, arr: np.array):
         """

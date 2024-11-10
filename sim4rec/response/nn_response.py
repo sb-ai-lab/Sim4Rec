@@ -7,7 +7,7 @@ from .sim4rec_response_function.models import ResponseModel
 from .sim4rec_response_function.embeddings import IndexEmbedding
 from .sim4rec_response_function.datasets import (
     RecommendationData,
-    PandasRecommendationData,
+    # PandasRecommendationData,
 )
 
 from pyspark.sql.types import (
@@ -34,8 +34,8 @@ SIM_LOG_COLS = [field.name for field in SIM_LOG_SCHEMA.fields]
 class NNResponseTransformer(ActionModelTransformer):
     def __init__(self, **kwargs):
         super().__init__()
+        self.hist_data = None
         for param, value in kwargs.items():
-            print(param, value)
             setattr(self, param, value)
 
     @classmethod
@@ -44,9 +44,9 @@ class NNResponseTransformer(ActionModelTransformer):
             params_dict = pickle.load(f)
         params_dict["backbone_response_model"] = ResponseModel.load(checkpoint_dir)
         with open(os.path.join(checkpoint_dir, "_item_indexer.pkl"), "rb") as f:
-            params_dict["_item_indexer"] = pickle.load(f)
+            params_dict["item_indexer"] = pickle.load(f)
         with open(os.path.join(checkpoint_dir, "_user_indexer.pkl"), "rb") as f:
-            params_dict["_user_indexer"] = pickle.load(f)
+            params_dict["user_indexer"] = pickle.load(f)
         return cls(**params_dict)
 
     def save(self, path):
@@ -59,7 +59,11 @@ class NNResponseTransformer(ActionModelTransformer):
             pickle.dump(self.user_indexer, f, pickle.HIGHEST_PROTOCOL)
         with open(os.path.join(path, "_params.pkl"), "wb") as f:
             pickle.dump(
-                {"outputCol": self.outputCol, "log_dir": self.log_dir},
+                {
+                    "outputCol": self.outputCol,
+                    "log_dir": self.log_dir,
+                    "hist_data_dir": self.hist_data_dir,
+                },
                 f,
                 pickle.HIGHEST_PROTOCOL,
             )
@@ -69,82 +73,67 @@ class NNResponseTransformer(ActionModelTransformer):
         Predict responses for given dataframe with recommendations.
 
         :param dataframe: new recommendations.
-
         """
+
+        def predict_udf(df):
+            # if not do this, something unstable happens to the Method Resolution Order
+            from .sim4rec_response_function.datasets import PandasRecommendationData
+
+            dataset = PandasRecommendationData(
+                log=df,
+                item_indexer=self.item_indexer,
+                user_indexer=self.user_indexer,
+            )
+
+            # replacing clicks in datset with predicted
+            dataset = self.backbone_response_model.transform(dataset=dataset)
+
+            return dataset._log[SIM_LOG_COLS]
+
         spark = new_recs.sql_ctx.sparkSession
-        self.__simlog = spark.read.schema(SIM_LOG_SCHEMA).parquet(self.log_dir)
-        if not self.__simlog:
+
+        # read the historical data
+        hist_data = spark.read.schema(SIM_LOG_SCHEMA).parquet(self.hist_data_dir)
+        if not hist_data:
+            print("Warning: the historical data is empty")
+            hist_data = spark.createDataFrame([], schema=SIM_LOG_SCHEMA)
+        # filter users whom we don't need
+        hist_data = hist_data.join(new_recs, on="user_idx", how="inner").select(
+            hist_data["*"]
+        )
+
+        # read the updated simulator log
+        simlog = spark.read.schema(SIM_LOG_SCHEMA).parquet(self.log_dir)
+        if not simlog:
             print("Warning: the simulator log is empty")
-            self.__simlog = spark.createDataFrame([], schema=SIM_LOG_SCHEMA)
+            simlog = spark.createDataFrame([], schema=SIM_LOG_SCHEMA)
+        # filter users whom we don't need
+        simlog = simlog.join(new_recs, on="user_idx", how="inner").select(simlog["*"])
 
-        def agg_func(df):
-            return self._predict_udf(df)
+        NEW_ITER_NO = 9999999
 
-        # TODO: add option to make bacthed predictions by ading
-        # temorary "batch_id" column
+        # since all the historical records are older than simulated by design,
+        # and new slates are newer than simulated, i can simply concat it
+        combined_data = hist_data.unionByName(simlog).unionByName(
+            new_recs.withColumn("response_proba", sf.lit(0.0))
+            .withColumn("response", sf.lit(0.0))
+            .withColumn(
+                "__iter",
+                sf.lit(
+                    NEW_ITER_NO
+                ),  # this is just a large number, TODO: add correct "__iter" field to sim4rec.sample_responses to avoid this constants
+            )
+        )
+
+        # not very optimal way, it makes one worker to
+        # operate with one user, discarding batched computations.
+        # TODO: add batch_id column and use one worker ?
         groupping_column = "user_idx"
-
-        new_recs = new_recs.withColumn("__iter", sf.lit(999999999))
-        new_recs = new_recs.withColumn("response", sf.lit(0.0))
-        new_recs = new_recs.withColumn("response_proba", sf.lit(0.0))
-        return (
-            new_recs.groupby(groupping_column)
-            .applyInPandas(agg_func, new_recs.schema)
-            .show()
+        result_df = combined_data.groupby(groupping_column).applyInPandas(
+            predict_udf, SIM_LOG_SCHEMA
         )
-
-    def _predict_udf(self, df):
-        """
-        Make predictions for given pandas DataFrame.
-        :param df: pandas DataFrame.
-        :return: pandas DataFrame with the same schema, but overwritten column 'respone_proba'.
-        """
-
-        # select only users whom we need
-        # will this be fast enought, or better filter before?
-        hist_data_selected_users = self.hist_data.join(
-            self.__simlog, on="user_idx", how="inner"
-        ).select(self.hist_data["*"])
-
-        # assume that historical data interactions were BEFORE simulate
-        previous_interactions = hist_data_selected_users.unionByName(self.__simlog)
-
-        new_slates = PandasRecommendationData(
-            df, item_indexer=self.item_indexer, user_indexer=self.user_indexer
-        )
-
-        # generating clicks
-        predicted_clicks = self.backbone_response_model.transform(
-            dataset=previous_interactions,
-            new_slates=new_slates,
-            method="autoregressive",
-        )
-
-        print(predicted_clicks)
-        #### DEBUG I am here now
-        # removing redundant columns
-        predictions_clean = predicted_clicks.to_iteraction_table()[
-            ["user_id", "item_id", "predicted_probs", "predicted_response"]
-        ]
-        predictions_clean["item_id"] = predictions_clean["item_id"].astype(int)
-        predictions_clean["user_id"] = predictions_clean["user_id"].astype(int)
-        predictions_clean.rename(
-            columns={
-                "user_id": "user_idx",
-                "item_id": "item_idx",
-                "predicted_probs": "response_proba",
-                "predicted_response": "response",
-            },
-            inplace=True,
-        )
-
-        final = new_recs_data[["user_idx", "item_idx", "relevance"]].join(
-            predictions_clean.set_index(["user_idx", "item_idx"]),
-            on=["user_idx", "item_idx"],
-            validate="one_to_one",
-        )
-
-        return final
+        filtered_df = result_df.filter(sf.col("__iter") == NEW_ITER_NO)
+        return filtered_df.select(new_recs.columns + [self.outputCol])
 
 
 class NNResponseEstimator(ActionModelEstimator):
@@ -211,4 +200,5 @@ class NNResponseEstimator(ActionModelEstimator):
             user_indexer=self.user_indexer,
             hist_data_dir=self.hist_data_dir,
             log_dir=self.log_dir,
+            outputCol=self.outputCol,
         )

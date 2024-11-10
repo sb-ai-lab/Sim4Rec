@@ -34,7 +34,7 @@ from .slatewise import (
     SlatewiseGRU,
     SlatewiseTransformer,
 )
-from .utils import concat_batch, create_loader, collate_rec_data
+from .utils import create_loader
 
 Metrics = namedtuple("metrics", ["rocauc", "f1", "accuracy"])
 
@@ -329,73 +329,58 @@ class ResponseModel:
 
     def _get_scores(
         self,
-        historical_data: RecommendationData,
-        new_slates: RecommendationData,
+        dataset: RecommendationData,
+        batch_size: int,
         **kwargs,
     ):
         """
-        Get predicted click provavilities.
+        Run model on dataset, get predicted click probabilities.
+
+        :return: (user_ids, timestamps, items, scores)
         """
         users, items, scores, timestamps = [], [], [], []
 
-        # compute all data in on ebatch (bathcing is performed on the spark MLLIb level)
+        loader = create_loader(dataset, batch_size=batch_size)
+        for batch in loader:
+            with torch.no_grad():
+                # run model
+                batch = {k: v.to(self.device) for k, v in batch.items()}
+                mask = batch["slates_mask"]
+                raw_scores = torch.sigmoid(self._model(batch))
+                items.append(batch["item_indexes"][mask].detach().cpu().numpy())
+                # create a view s.t. [user_1, ... ] -> [[user_1 x slate_size] x sequence_size, ... ]
+                # then select by mask for items to allign with scores and item_idx sequences
+                users.append(
+                    batch["user_indexes"][:, None, None]
+                    .expand_as(mask)[mask]
+                    .detach()
+                    .cpu()
+                    .numpy()
+                )
+                scores.append(raw_scores[mask].detach().cpu().numpy())
+                timestamps.append(batch["timestamps"][mask].detach().cpu().numpy())
+            return users, timestamps, items, scores
 
-        new_recs = new_slates[[]]  # all users from new slates
-        hist_data = historical_data[new_slates.users]  # only relevant users
-        combined_data = concat_batch(hist_data, new_recs)
-        batch = collate_rec_data(combined_data)
-        batch = {k: v.to(self.device) for k, v in batch.items()}
-
-        # for each session, this index tensor points to the last interaction
-        # which is the only interachion in new slates by design
-        slate_size = max(
-            hist_data[0]["slates_mask"].shape[-1], new_recs[0]["slates_mask"].shape[-1]
-        )
-        hist_lengths = torch.tensor(
-            [d["length"] for d in hist_data], device=self.device
-        )[:, None]
-        hist_lengths = hist_lengths[..., None].repeat(1, 1, slate_size) + 1
-
-        with torch.no_grad():
-            # run model
-            raw_scores = torch.sigmoid(self._model(batch))
-            items.append(
-                batch["item_indexes"].gather(dim=1, index=hist_lengths).detach().cpu()
-            )
-            users.append(
-                batch["item_indexes"]
-                .gather(dim=1, index=hist_lengths[..., 0])
-                .detach()
-                .cpu()
-            )
-            scores.append(raw_scores.gather(dim=1, index=hist_lengths).detach().cpu())
-            timestamps.append(
-                batch["timestamps"].gather(dim=1, index=hist_lengths).detach().cpu()
-            )
-        print(users, timestamps, items, scores)
-        return users, timestamps, items, scores
-
-    def transform(self, historical_data, new_slates):
+    def transform(self, dataset, batch_size=128, **kwargs):
         """
         Returns a recommendation dataset with response probabilities provided.
 
-        :param PandasRecommendationData historical: initial parts of each session.
-        :param PandasRecommendationData new_slates: new recommendations data.
-            It is assumed, that only one slate per user is present.
+        :param RecommendationData dataset: datset to operate on.
+
         """
-        if type(new_slates) is PandasRecommendationData:
+        if type(dataset) is PandasRecommendationData:
             user_idx, timestamp, item_idx, score = self._get_scores(
-                historical_data, new_slates
+                dataset, batch_size, **kwargs
             )
             score_df = pd.DataFrame(
                 {
-                    "user_idx": user_idx,
-                    "__iter": timestamp,
-                    "item_idx": item_idx,
-                    "score": score,
+                    "user_index": np.concatenate(user_idx),
+                    "__iter": np.concatenate(timestamp),
+                    "item_index": np.concatenate(item_idx),
+                    "score": np.concatenate(score),
                 }
             )
-            return deepcopy(new_slates).apply_scoring(score_df)
+            return deepcopy(dataset).apply_scoring(score_df)
         else:
             raise NotImplementedError
 

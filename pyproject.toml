@@ -26,6 +26,7 @@ scipy = "1.5.4"
 replay-rec = "0.11.0"
 lightfm = {git = "https://github.com/lyst/lightfm", rev = "0c9c31e"}
 notebook = "7.0.8"
+torchvision = "0.9.1"
 
 [tool.poetry.dev-dependencies]
 # visualization
