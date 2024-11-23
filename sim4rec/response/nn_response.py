@@ -3,9 +3,9 @@ import pickle
 import pyspark.sql.functions as sf
 
 from .response import ActionModelEstimator, ActionModelTransformer
-from .sim4rec_response_function.models import ResponseModel
-from .sim4rec_response_function.embeddings import IndexEmbedding
-from .sim4rec_response_function.datasets import (
+from .nn_utils.models import ResponseModel
+from .nn_utils.embeddings import IndexEmbedding
+from .nn_utils.datasets import (
     RecommendationData,
     # PandasRecommendationData,
 )
