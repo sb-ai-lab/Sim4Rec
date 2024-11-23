@@ -89,11 +89,28 @@ class GeneratorBase(ABC, HasLabel, HasDataSize, HasSeedSequence):
         return self._df.sample(sample_frac, seed=seed)
 
 
-class RealDataGenerator(GeneratorBase):
+class RealDataGenerator(GeneratorBase, HasParallelizationLevel):
     """
     Real data generator, which can sample from existing dataframe
     """
     _source_df : DataFrame
+    
+    def __init__(
+        self,
+        label : str,
+        parallelization_level : int = 1,
+        seed : int = None
+    ):
+        """
+        :param label: Generator string label
+        :param parallelization_level: Parallelization level, defaults to 1
+        :param seed: Fixes seed sequence to use during multiple
+            generator calls, defaults to None
+        """
+
+        super().__init__(label=label, seed=seed)
+
+        self.setParallelizationLevel(parallelization_level)
 
     def fit(
         self,
@@ -132,9 +149,11 @@ class RealDataGenerator(GeneratorBase):
 
         if self._df is not None:
             self._df.unpersist()
-
+            
+        pl = self.getParallelizationLevel()
         self._df = self._source_df.orderBy(sf.rand(seed=seed))\
                                   .limit(num_samples)\
+                                  .repartition(pl)\
                                   .cache()
         self.setDataSize(self._df.count())
 
