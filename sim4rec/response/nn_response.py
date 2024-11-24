@@ -77,7 +77,7 @@ class NNResponseTransformer(ActionModelTransformer):
 
         def predict_udf(df):
             # if not do this, something unstable happens to the Method Resolution Order
-            from .sim4rec_response_function.datasets import PandasRecommendationData
+            from .nn_utils.datasets import PandasRecommendationData
 
             dataset = PandasRecommendationData(
                 log=df,
