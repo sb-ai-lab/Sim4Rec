@@ -17,15 +17,12 @@ repository = "https://github.com/sb-ai-lab/Sim4Rec"
 python = ">=3.8, <3.10"
 pyarrow = "*"
 sdv = "0.15.0"
-torch = "1.9.1"
+torch = ">=1.9.1"
 torchmetrics="*"
 pandas = "*"
-pyspark = "3.1.3"
+pyspark = ">=3.0"
 numpy = ">=1.20.0"
-scipy = "1.5.4"
-lightfm = {git = "https://github.com/lyst/lightfm", rev = "0c9c31e"}
-notebook = "7.0.8"
-torchvision = "0.10.1"
+scipy = "*"
 
 [tool.poetry.dev-dependencies]
 # visualization
