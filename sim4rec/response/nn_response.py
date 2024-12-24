@@ -124,8 +124,7 @@ class NNResponseTransformer(ActionModelTransformer):
         )
 
         # not very optimal way, it makes one worker to
-        # operate with one user, discarding batched computations.
-        # TODO: add batch_id column and use one worker ?
+        # operate with one user, discarding batched computations inside torch
         groupping_column = "user_idx"
         result_df = combined_data.groupby(groupping_column).applyInPandas(
             predict_udf, SIM_LOG_SCHEMA

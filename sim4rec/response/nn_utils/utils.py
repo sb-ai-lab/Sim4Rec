@@ -66,7 +66,6 @@ def collate_rec_data(batch: list, padding_value=0):
     # responses: number of clicks per recommended item
     # shape: batch_size, max_sequence_len, max_slate_size
     responses = [torch.tensor(b["responses"], dtype=torch.long) for b in batch]
-    # print(responses)
     responses = torch.nn.utils.rnn.pad_sequence(
         responses, padding_value=padding_value, batch_first=True
     )
@@ -76,7 +75,6 @@ def collate_rec_data(batch: list, padding_value=0):
     # for further decoding model outputs
     # shape: batch_size, max_sequence_len, max_slate_size
     timestamps = [torch.tensor(b["timestamps"], dtype=torch.int) for b in batch]
-    # print(timestamps)
     timestamps = torch.nn.utils.rnn.pad_sequence(
         timestamps, padding_value=padding_value, batch_first=True
     )
@@ -87,9 +85,8 @@ def collate_rec_data(batch: list, padding_value=0):
         "timestamps": timestamps,  # interaction timestamp
         "length": batch_lengths,  # lenghts of each session in batch
         "user_indexes": user_indexes,  # indexes of users
-        "out_mask": slate_masks,  # todo: do we need this mask for metric stability?
+        "out_mask": slate_masks,  # a mask for train-time metric computation
     }
-    # print(batch)
     return batch
 
 
@@ -101,12 +98,8 @@ def concat_batch(left, right):
     """
     sessionwise_fields = [
         "item_indexes",
-        # TODO: "item_embeddings",
-        # TODO: "item_categorical",
         "slates_mask",
         "responses",
-        # TODO: "user_embeddings",
-        # TODO: "user_categorical",
         "timestamps",
         "user_indexes",
         "recommendation_idx",

@@ -135,10 +135,6 @@ class Discriminator(nn.Module):
 
 
 class AdversarialNCM(nn.Module):
-    """
-    TODO: move this model to common NCM code.
-    """
-
     def __init__(self, embedding, readout=False):
         super().__init__()
         self.embedding = embedding

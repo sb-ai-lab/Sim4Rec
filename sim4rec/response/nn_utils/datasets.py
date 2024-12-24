@@ -213,8 +213,6 @@ class RecommendationData(DatasetBase):
     * `relevance`       | float | relevance of recommemded item in slate. This columns is used
                                   only sllate_pos is not present, and then slate_pos is
                                   assigned according to relevances.
-
-    TODO: add embeddings.
     """
 
     def __init__(
