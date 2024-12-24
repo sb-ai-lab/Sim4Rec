@@ -71,8 +71,14 @@ class NNResponseTransformer(ActionModelTransformer):
     def _transform(self, new_recs):
         """
         Predict responses for given dataframe with recommendations.
+        Response function gets dataframe with columns <user_idx, item_idx, relevance, __iter>
+        and returns dataframe with columns <user_idx, item_idx, relevance, __iter, response_proba>.
+        If the initial dataframe had some other columns, they will be returned as well.
 
-        :param dataframe: new recommendations.
+        To sample clicks from this raw probabilities, please use `.response.BernoulliResponse`
+
+        :param new_recs: new recommendations.
+        :returns: same dataframe, but with predicted click probabilities.
         """
 
         def predict_udf(df):
