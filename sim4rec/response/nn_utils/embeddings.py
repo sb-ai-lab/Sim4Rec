@@ -113,6 +113,7 @@ class EmbeddingBase(ABC, nn.Module):
 
         return consumed_embedding
 
+
 class IndexEmbedding(EmbeddingBase):
     """
     Learnable nn.Embeddings for item and user indexes.
@@ -146,10 +147,10 @@ class IndexEmbedding(EmbeddingBase):
     def _get_user_embeddings(self, batch):
         return self.user_embedding(batch["user_indexes"])
 
+
 def stack_embeddings(user_embs, item_embs):
     """Concatenate user and item embeddings"""
     return torch.cat(
         [item_embs, user_embs[:, :, None, :].repeat(1, 1, item_embs.size(-2), 1)],
         dim=-1,
     )
-

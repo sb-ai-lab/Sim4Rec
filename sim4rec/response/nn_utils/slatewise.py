@@ -1,4 +1,5 @@
 import torch
+
 # import absч
 import torch.nn as nn
 from .embeddings import stack_embeddings
@@ -8,6 +9,7 @@ class DotProduct(torch.nn.Module):
     """
     Model whose prediction scoreis are just a dot product of user and item embeddings.
     """
+
     def __init__(self, embedding):
         super().__init__()
         self.embedding = embedding
@@ -25,6 +27,7 @@ class LogisticRegression(torch.nn.Module):
     """
     Logistic Regression run on a concatenation of the user's and the item's embedding.
     """
+
     def __init__(self, embedding, output_dim=1):
         super().__init__()
         self.embedding = embedding
@@ -40,6 +43,7 @@ class SlatewiseGRU(torch.nn.Module):
     """
     GRU acting on each slate independently.
     """
+
     def __init__(self, embedding, dropout=0, output_dim=1):
         super().__init__()
         self.embedding = embedding

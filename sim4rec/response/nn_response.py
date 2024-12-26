@@ -14,7 +14,7 @@ from pyspark.sql.types import (
     DoubleType,
 )
 
-# Dataframe schema for simulator logs. 
+# Dataframe schema for simulator logs.
 SIM_LOG_SCHEMA = StructType(
     [
         StructField("user_idx", IntegerType(), True),
@@ -99,7 +99,7 @@ class NNResponseTransformer(ActionModelTransformer):
         if not hist_data:
             print("Warning: the historical data is empty")
             hist_data = spark.createDataFrame([], schema=SIM_LOG_SCHEMA)
-        
+
         # filter users whom we don't need
         hist_data = hist_data.join(new_recs, on="user_idx", how="semi")
 
@@ -108,26 +108,24 @@ class NNResponseTransformer(ActionModelTransformer):
         if not simlog:
             print("Warning: the simulator log is empty")
             simlog = spark.createDataFrame([], schema=SIM_LOG_SCHEMA)
-       
-       # filter users whom we don't need
+
+        # filter users whom we don't need
         simlog = simlog.join(new_recs, on="user_idx", how="semi")
 
         # since all the historical records are older than simulated by design,
         # and new slates are newer than simulated, i can simply concat it
-        NEW_ITER_NO = 9999999 # this is just a large number
+        NEW_ITER_NO = 9999999  # this is just a large number
         combined_data = hist_data.unionByName(simlog).unionByName(
             new_recs.withColumn("response_proba", sf.lit(0.0))
             .withColumn("response", sf.lit(0.0))
             .withColumn(
                 "__iter",
-                sf.lit(
-                    NEW_ITER_NO
-                ),
+                sf.lit(NEW_ITER_NO),
             )
         )
-        
+
         # the dataframe is assumed to be already partitioned by user_idx,
-        # here we actually just compute response probabilities for 
+        # here we actually just compute response probabilities for
         # one user by one worker
         groupping_column = "user_idx"
         result_df = combined_data.groupby(groupping_column).applyInPandas(

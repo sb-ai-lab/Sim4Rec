@@ -123,7 +123,7 @@ class ResponseModel:
         return model
 
     def _val_epoch(self, data_loader, silent=True):
-        """Run model on given dataloader, compute metrics""" 
+        """Run model on given dataloader, compute metrics"""
         self.auc.reset()
         self._model.eval()
         loss_accumulated = 0.0
@@ -208,7 +208,7 @@ class ResponseModel:
 
             val_scores = self.evaluate(val_loader, silent=silent)
             epochs_without_improvement += 1
-            
+
             # updating best checkpoint based on roc_auc, then f1, then accuracy
             if val_scores >= self.best_val_scores:
                 best_model = deepcopy(self._model)
@@ -313,9 +313,7 @@ class ResponseModel:
             train_data, val_data = train_data.split_by_users(0.8, seed=123)
         val_loader = create_loader(val_data, batch_size=batch_size)
         train_loader = create_loader(train_data, batch_size=batch_size)
-        self._train(
-            train_loader, val_loader, silent=silent, device=device, **kwargs
-        )
+        self._train(train_loader, val_loader, silent=silent, device=device, **kwargs)
 
     def _get_scores(
         self,

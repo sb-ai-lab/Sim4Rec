@@ -236,7 +236,7 @@ class RecommendationData(DatasetBase):
                 ]
             )
 
-        # in _users we store only users which are actually present 
+        # in _users we store only users which are actually present
         # in log rather than all indexed users
         self._users = [
             row["user_idx"] for row in self._log.select("user_idx").distinct().collect()

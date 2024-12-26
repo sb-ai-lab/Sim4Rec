@@ -115,7 +115,7 @@ class SCOT(nn.Module):
 
         # Adding a dummy "zero item". It is required, pytorch
         # attention implementation will fail if there are sequences
-        # with no keys in batch 
+        # with no keys in batch
         item_embs = item_embs.flatten(1, 2)
         item_embs = add_zero_item(item_embs)
         slate_num_for_item = slate_num_for_item.flatten(1, 2) + 1
@@ -218,10 +218,10 @@ class DummyTransformerGRU(nn.Module):
         # sequencewise gru
         gru_features, _ = self.rnn_layer(item_embs.flatten(1, 2))
         gru_features = gru_features.reshape(item_embs.shape)
-        
+
         # concatenation
         features = torch.cat([att_features, gru_features], dim=-1)
-        
+
         return self.out_layer(features).squeeze(-1)
 
 
