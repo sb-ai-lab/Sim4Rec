@@ -23,7 +23,8 @@ class SessionwiseGRU(nn.Module):
         shp = item_embs.shape[:-1]  # (batch_size, session_len, slate_size)
         # flatening slates into one long sequence
         item_embs = item_embs.flatten(1, 2)
-        # hidden is the user embedding before the first iteraction
+
+        # hidden state is the user embedding before the first iteraction
         hidden = user_embs[None, :, 0, :].contiguous()
         rnn_out, _ = self.rnn_layer(
             item_embs,
@@ -114,13 +115,13 @@ class SCOT(nn.Module):
 
         # Adding a dummy "zero item". It is required, pytorch
         # attention implementation will fail if there are sequences
-        # with no keys in batch. We will drop out response on it later.
+        # with no keys in batch 
         item_embs = item_embs.flatten(1, 2)
         item_embs = add_zero_item(item_embs)
         slate_num_for_item = slate_num_for_item.flatten(1, 2) + 1
         slate_num_for_item = add_zero_item(slate_num_for_item)
 
-        # gatghering clicked items
+        # gathering clicked items
         keys = item_embs
         clicked_mask = batch["responses"].flatten(1, 2) > 0
         clicked_mask = ~add_zero_item(~clicked_mask)
@@ -155,7 +156,7 @@ class SCOT(nn.Module):
         )
         attn_mask.to(device)
 
-        # Inference the model
+        # run the model
         features, attn_map = self.attention(
             item_embs,
             keys,
@@ -164,7 +165,7 @@ class SCOT(nn.Module):
             attn_mask=attn_mask.repeat_interleave(self.nheads, 0),
         )
 
-        # removing artificial `zero item`
+        # remove artificial `zero item`
         features = features[:, 1:, :]
         return self.out_layer(features).reshape(shp).squeeze(-1)
 
@@ -198,6 +199,7 @@ class DummyTransformerGRU(nn.Module):
         # add an artificial item
         features = add_zero_item(features)
         key_padding_mask = add_zero_item(~key_padding_mask)
+        # run module
         features, attn_map = self.attention(
             features, features, features, key_padding_mask=key_padding_mask
         )
@@ -216,9 +218,10 @@ class DummyTransformerGRU(nn.Module):
         # sequencewise gru
         gru_features, _ = self.rnn_layer(item_embs.flatten(1, 2))
         gru_features = gru_features.reshape(item_embs.shape)
-
+        
+        # concatenation
         features = torch.cat([att_features, gru_features], dim=-1)
-
+        
         return self.out_layer(features).squeeze(-1)
 
 

@@ -11,7 +11,7 @@ from torch.utils.data import Dataset
 class DatasetBase(Dataset, ABC):
     """
     The items and users are reindexed, because torch.nn.Embeddings
-    and torch.Dataset requires integer indexes in 0...N. This class
+    and torch.Dataset requires integer indexes in [0, N]. This class
     obtains indexes from keyword arguments (`item_id2index` and
     `user_id2index`) if specified. You probably want to do it,
     when usind different datasets obtained from one source.
@@ -44,7 +44,6 @@ class DatasetBase(Dataset, ABC):
         if user_indexer:
             self._user_indexer = user_indexer
         else:
-            # users always receive indexes
             self._user_indexer = Indexer(pad_id=padding_id, unk_id=unknown_id)
 
     @property
@@ -91,7 +90,7 @@ class DatasetBase(Dataset, ABC):
     @abstractmethod
     def _get_log_for_users(self, user_idxs):
         """
-        Given a list of user indexes, return a list of rows cntaining
+        Given a list of user indexes, return a list of rows containing
         aggregated data for given users. Each row corresponds to one interaction,
         i.e. each pair ('user_idx', '__iter') supposed to be unique in log.
 
@@ -100,16 +99,14 @@ class DatasetBase(Dataset, ABC):
         """
         pass
 
-    def __getitems__(self, user_idxs: list) -> dict:
+    def __getitems__(self, user_idxs: list) -> list[dict]:
         """Get data points for users with ids in `user_idx`"""
-        users_log = self._get_log_for_users(
-            user_idxs
-        )  # list of rows, each row is ineraction
+        # user_log list of rows, each row corresponds to one interaction
+        users_log = self._get_log_for_users(user_idxs)
+
         batch = []
         curr_user_log = []
         prev_user = -1
-
-        # TODO: will it be faster if implemented via convertion to pandas?
         for row in users_log:
             if prev_user == row["user_idx"]:
                 curr_user_log.append(row)
@@ -123,19 +120,6 @@ class DatasetBase(Dataset, ABC):
         batch.append(self._user_log_to_datapoint(curr_user_log, user_index))
 
         return batch
-
-    def get_empty_data(self, slate_size=10):
-        """Empty datapont"""
-        # everything is masked, hence it won't impact training nor metric computation
-        return {
-            "item_indexes": np.ones((1, slate_size), dtype=int),
-            "user_index": 1,  # unknown index
-            "slates_mask": np.zeros((1, slate_size), dtype=bool),
-            "responses": np.zeros((1, slate_size), dtype=int),
-            "length": 1,  # zero-length would cause problems with torch.nn.rnn_pad_sequences
-            "slate_size": slate_size,
-            "timestamps": np.ones((1, slate_size), dtype=int) * -(10**9),
-        }
 
     def _user_log_to_datapoint(self, slates: list, user_index: int):
         """
@@ -196,6 +180,18 @@ class DatasetBase(Dataset, ABC):
         # print(data_point)
         return data_point
 
+    def get_empty_data(self, slate_size=10):
+        """Empty data point"""
+        return {
+            "item_indexes": np.ones((1, slate_size), dtype=int),
+            "user_index": 1,  # unknown index
+            "slates_mask": np.zeros((1, slate_size), dtype=bool),
+            "responses": np.zeros((1, slate_size), dtype=int),
+            "length": 1,  # zero-length would cause problems during batch collation
+            "slate_size": slate_size,
+            "timestamps": np.ones((1, slate_size), dtype=int) * -(10**9),
+        }
+
 
 class RecommendationData(DatasetBase):
     """
@@ -240,7 +236,8 @@ class RecommendationData(DatasetBase):
                 ]
             )
 
-        # in _users only users which are actually present in data are stored, NOT all indexed users
+        # in _users we store only users which are actually present 
+        # in log rather than all indexed users
         self._users = [
             row["user_idx"] for row in self._log.select("user_idx").distinct().collect()
         ]

@@ -93,8 +93,8 @@ class ResponseModel:
 
     def dump(self, path):
         """
-        Saves model's parameters and weights checkpoint on a disk.
-        :param path: where the model is saved.
+        Save model parameters and weights checkpoint on a disk.
+        :param path: where to save teh model
         """
         params = {
             "model_name": self.model_name,
@@ -110,8 +110,8 @@ class ResponseModel:
     @classmethod
     def load(cls, path):
         """
-        Loads model from files creqated by `dump` method.
-        :param path: where data is located
+        Loads model from files creqated by `ResponseModel.dump` method.
+        :param path: where the model is saved
         """
         embeddings = torch.load(os.path.join(path, "embeddings.pt"))
         with open(os.path.join(path, "params.pkl"), "rb") as f:
@@ -123,7 +123,7 @@ class ResponseModel:
         return model
 
     def _val_epoch(self, data_loader, silent=True):
-        # run model on dataloader, compute auc
+        """Run model on given dataloader, compute metrics""" 
         self.auc.reset()
         self._model.eval()
         loss_accumulated = 0.0
@@ -208,16 +208,13 @@ class ResponseModel:
 
             val_scores = self.evaluate(val_loader, silent=silent)
             epochs_without_improvement += 1
-            # choosing best model based on roc_auc, then f1, then accuracy
+            
+            # updating best checkpoint based on roc_auc, then f1, then accuracy
             if val_scores >= self.best_val_scores:
                 best_model = deepcopy(self._model)
                 best_model_calibrator = deepcopy(self._calibrator)
                 self.best_val_scores = val_scores
                 best_epoch = epoch
-
-            if not best_val_loss or best_val_loss > self.val_loss:
-                epochs_without_improvement = 0
-                best_val_loss = self.val_loss
 
             if self.log_to_mlflow:
                 metrics = {
@@ -245,6 +242,9 @@ class ResponseModel:
                 mlflow.log_metrics(metrics, step=epoch)
 
             # early stopping
+            if not best_val_loss or best_val_loss > self.val_loss:
+                epochs_without_improvement = 0
+                best_val_loss = self.val_loss
             if epochs_without_improvement >= early_stopping or val_scores == (
                 1.0,
                 1.0,
@@ -313,19 +313,9 @@ class ResponseModel:
             train_data, val_data = train_data.split_by_users(0.8, seed=123)
         val_loader = create_loader(val_data, batch_size=batch_size)
         train_loader = create_loader(train_data, batch_size=batch_size)
-
-        # dot product with svd or explicit embeddings has no params to fit
-        param_num = sum(
-            p.numel() for p in self._embeddings.parameters() if p.requires_grad
+        self._train(
+            train_loader, val_loader, silent=silent, device=device, **kwargs
         )
-        param_num += sum(p.numel() for p in self._model.parameters() if p.requires_grad)
-        if param_num == 0:
-            self.best_model = deepcopy(self._model)
-            self.best_val_scores = self.evaluate(val_loader)
-        else:
-            self._train(
-                train_loader, val_loader, silent=silent, device=device, **kwargs
-            )
 
     def _get_scores(
         self,
@@ -343,7 +333,6 @@ class ResponseModel:
         loader = create_loader(dataset, batch_size=batch_size)
         for batch in loader:
             with torch.no_grad():
-                # run model
                 batch = {k: v.to(self.device) for k, v in batch.items()}
                 mask = batch["slates_mask"]
                 raw_scores = torch.sigmoid(self._model(batch))
@@ -366,7 +355,6 @@ class ResponseModel:
         Returns a recommendation dataset with response probabilities provided.
 
         :param RecommendationData dataset: datset to operate on.
-
         """
         if type(dataset) is PandasRecommendationData:
             user_idx, timestamp, item_idx, score = self._get_scores(

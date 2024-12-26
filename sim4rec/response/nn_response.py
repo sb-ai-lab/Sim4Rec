@@ -5,10 +5,7 @@ import pyspark.sql.functions as sf
 from .response import ActionModelEstimator, ActionModelTransformer
 from .nn_utils.models import ResponseModel
 from .nn_utils.embeddings import IndexEmbedding
-from .nn_utils.datasets import (
-    RecommendationData,
-    # PandasRecommendationData,
-)
+from .nn_utils.datasets import RecommendationData
 
 from pyspark.sql.types import (
     StructType,
@@ -17,7 +14,7 @@ from pyspark.sql.types import (
     DoubleType,
 )
 
-# move this to simulator core(?)
+# Dataframe schema for simulator logs. 
 SIM_LOG_SCHEMA = StructType(
     [
         StructField("user_idx", IntegerType(), True),
@@ -40,6 +37,7 @@ class NNResponseTransformer(ActionModelTransformer):
 
     @classmethod
     def load(cls, checkpoint_dir):
+        """Load model saved with `NNResponseTransformer.save` method."""
         with open(os.path.join(checkpoint_dir, "_params.pkl"), "rb") as f:
             params_dict = pickle.load(f)
         params_dict["backbone_response_model"] = ResponseModel.load(checkpoint_dir)
@@ -50,7 +48,7 @@ class NNResponseTransformer(ActionModelTransformer):
         return cls(**params_dict)
 
     def save(self, path):
-        """Save model at given path."""
+        """Save response model at given path."""
         os.makedirs(path)
         self.backbone_response_model.dump(path)
         with open(os.path.join(path, "_item_indexer.pkl"), "wb") as f:
@@ -82,7 +80,7 @@ class NNResponseTransformer(ActionModelTransformer):
         """
 
         def predict_udf(df):
-            # if not do this, something unstable happens to the Method Resolution Order
+            # This import is required for correct serialization on worker's side.
             from .nn_utils.datasets import PandasRecommendationData
 
             dataset = PandasRecommendationData(
@@ -90,8 +88,6 @@ class NNResponseTransformer(ActionModelTransformer):
                 item_indexer=self.item_indexer,
                 user_indexer=self.user_indexer,
             )
-
-            # replacing clicks in datset with predicted
             dataset = self.backbone_response_model.transform(dataset=dataset)
 
             return dataset._log[SIM_LOG_COLS]
@@ -103,6 +99,7 @@ class NNResponseTransformer(ActionModelTransformer):
         if not hist_data:
             print("Warning: the historical data is empty")
             hist_data = spark.createDataFrame([], schema=SIM_LOG_SCHEMA)
+        
         # filter users whom we don't need
         hist_data = hist_data.join(new_recs, on="user_idx", how="semi")
 
@@ -111,13 +108,13 @@ class NNResponseTransformer(ActionModelTransformer):
         if not simlog:
             print("Warning: the simulator log is empty")
             simlog = spark.createDataFrame([], schema=SIM_LOG_SCHEMA)
-        # filter users whom we don't need
+       
+       # filter users whom we don't need
         simlog = simlog.join(new_recs, on="user_idx", how="semi")
-
-        NEW_ITER_NO = 9999999
 
         # since all the historical records are older than simulated by design,
         # and new slates are newer than simulated, i can simply concat it
+        NEW_ITER_NO = 9999999 # this is just a large number
         combined_data = hist_data.unionByName(simlog).unionByName(
             new_recs.withColumn("response_proba", sf.lit(0.0))
             .withColumn("response", sf.lit(0.0))
@@ -125,12 +122,13 @@ class NNResponseTransformer(ActionModelTransformer):
                 "__iter",
                 sf.lit(
                     NEW_ITER_NO
-                ),  # this is just a large number, TODO: add correct "__iter" field to sim4rec.sample_responses to avoid this constants
+                ),
             )
         )
-
-        # not very optimal way, it makes one worker to
-        # operate with one user, discarding batched computations inside torch
+        
+        # the dataframe is assumed to be already partitioned by user_idx,
+        # here we actually just compute response probabilities for 
+        # one user by one worker
         groupping_column = "user_idx"
         result_df = combined_data.groupby(groupping_column).applyInPandas(
             predict_udf, SIM_LOG_SCHEMA
@@ -176,7 +174,8 @@ class NNResponseEstimator(ActionModelEstimator):
         """
         Fits the model on given data.
 
-        :param DataFrame train_data: Data to train on
+        :param DataFrame train_data: Data to train on, this data must match
+        the simulator log schema exactly.
         """
         train_dataset = RecommendationData(
             log=train_data,

@@ -45,7 +45,6 @@ def collate_rec_data(batch: list, padding_value=0):
             b["timestamps"] = pad_slates(b["timestamps"], max_slate_size, padding_value)
 
     # user indexes
-    # print([b["user_index"] for b in batch])
     user_indexes = torch.tensor([b["user_index"] for b in batch], dtype=torch.long)
 
     # item indexes
@@ -220,13 +219,6 @@ class Indexer:
         unk_index = self._id2index[self.unk_id]
         vfunc = np.vectorize(lambda x: self._id2index.get(x, unk_index))
         return vfunc(arr)
-
-    # def index_df(self, df, inputCol, outputCol):
-    #     """
-    #     Apply indexing to the whole spark dataframe colmn.
-    #     """
-    #     mapping_expr = create_map([lit(x) for x in chain(*self._id2index.items())])
-    #     return df.withColumn(outputCol, coalesce(mapping_expr[col(inputCol)], lit(1)))
 
     def get_id(self, arr: np.array):
         """

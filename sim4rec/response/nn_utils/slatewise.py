@@ -6,10 +6,8 @@ from .embeddings import stack_embeddings
 
 class DotProduct(torch.nn.Module):
     """
-    Simplest model which predictions score is just a dot product of
-    user and item embeddings.
+    Model whose prediction scoreis are just a dot product of user and item embeddings.
     """
-
     def __init__(self, embedding):
         super().__init__()
         self.embedding = embedding
@@ -25,9 +23,8 @@ class DotProduct(torch.nn.Module):
 
 class LogisticRegression(torch.nn.Module):
     """
-    Simple Logistic Regression run on a concatenation of the user's and the item's embedding.
+    Logistic Regression run on a concatenation of the user's and the item's embedding.
     """
-
     def __init__(self, embedding, output_dim=1):
         super().__init__()
         self.embedding = embedding
@@ -43,7 +40,6 @@ class SlatewiseGRU(torch.nn.Module):
     """
     GRU acting on each slate independently.
     """
-
     def __init__(self, embedding, dropout=0, output_dim=1):
         super().__init__()
         self.embedding = embedding
@@ -143,7 +139,6 @@ class NeuralClickModel(nn.Module):
         items = torch.cat([item_embs.flatten(0, 1), item_embs.flatten(0, 1)], dim=-1)
         h = user_embs.flatten(0, 1)[None, :, :]
         clicks = torch.zeros_like(batch["responses"]).flatten(0, 1)
-        # (batch['responses'].flatten(0,1) > 0 ).int().clone()
 
         if self.readout:
             res = []
@@ -165,7 +160,7 @@ class NeuralClickModel(nn.Module):
                         :, :, None
                     ]
                 elif self.readout == "diff_sample" or self.readout_mode == "sample":
-                    # gumbel trick
+                    # gumbel-softmax trick
                     eps = 1e-8  # to avoid numerical instability
                     gumbel_sample = (torch.rand_like(y) + eps).log()
                     gumbel_sample /= (torch.rand_like(y) + eps).log() + eps
