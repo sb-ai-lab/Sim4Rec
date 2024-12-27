@@ -4,6 +4,15 @@ import torch.nn as nn
 from sklearn.utils.extmath import randomized_svd
 from abc import ABC, abstractmethod
 
+def add_zero_item(item_embeddings):
+    """
+    Adds an artificial zero item to a given item sequence
+    Item embeddings are assumed to be of a shape
+    (batch, sequence_len, embedding_dim) or (batch, sequence_len)
+    """
+    return torch.cat(
+        [torch.zeros_like(item_embeddings[:, :1, ...]), item_embeddings], dim=1
+    )
 
 class EmbeddingBase(ABC, nn.Module):
     """
