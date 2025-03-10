@@ -5,8 +5,11 @@ from .response import (
     NoiseResponse,
     CosineSimilatiry,
     BernoulliResponse,
-    ParametricResponseFunction
+    ParametricResponseFunction,
 )
+
+from .nn_response import NNResponseTransformer, NNResponseEstimator 
+
 
 __all__ = [
     'ActionModelEstimator',
@@ -15,5 +18,7 @@ __all__ = [
     'NoiseResponse',
     'CosineSimilatiry',
     'BernoulliResponse',
-    'ParametricResponseFunction'
+    'ParametricResponseFunction',
+    'NNResponseTransformer',
+    'NNResponseEstimator',
 ]
