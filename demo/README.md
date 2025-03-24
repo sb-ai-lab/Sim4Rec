@@ -23,9 +23,9 @@ pip install --upgrade pip wheel poetry
 poetry install
 ```
 
-Please install `rs_datasets` to import MovieLens dataset for the synthetic_data_generation.ipynb
+Please update `packaging` to the version 24.0, install `rs_datasets` to import MovieLens dataset for the synthetic data generation case and install `seaborn`.
 ```bash
-pip install rs_datasets
+pip install -r requirements.txt
 ```
 
 ## Synthetic data generation pipeline
@@ -51,4 +51,3 @@ pip install rs_datasets
  - Get recommendations for all users from the recommender system
  - Get responses to recommended items from the response function
  - Measure the quality of the recommender system trained in the simulation cycle
- 
